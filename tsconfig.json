@@ -1,0 +1,33 @@
+{
+	// "extends": ["@tsconfig/node16/tsconfig.json", "@tsconfig/strictest/tsconfig.json"], // not support multiplue extends on ts-node
+	"extends": "@tsconfig/node16/tsconfig.json",
+	"compilerOptions": {
+		// temporary "@tsconfig/strictest/tsconfig.json" options start
+		"strict": true,
+		"allowUnusedLabels": false,
+		"allowUnreachableCode": false,
+		"exactOptionalPropertyTypes": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+
+		"isolatedModules": true,
+
+		"checkJs": true,
+
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		// temporary "@tsconfig/strictest/tsconfig.json" options end
+
+		"outDir": "dist",
+		"declaration": true,
+		"sourceMap": true
+	},
+	"include": ["srv/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
+}
