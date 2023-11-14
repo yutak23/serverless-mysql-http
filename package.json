@@ -6,8 +6,11 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"tsc:watch": "tsc --watch",
+		"build:watch": "tsc --watch",
 		"build": "yarn lint && yarn style && rm -rf ./dist && tsc",
+		"express:watch": "nodemon --watch dist/ dist/app.js",
+		"express": "node dist/app.js",
+		"test": "vitest run",
 		"lint": "eslint . --ext .cjs,.mjs,.js,.ts,.cts,.mts",
 		"lint:fix": "eslint . --ext .cjs,.mjs,.js,.ts,.cts,.mts --fix",
 		"style": "prettier -c .",
@@ -25,13 +28,24 @@
 		],
 		"yarn.lock": "license-checker --production --failOn \"GPL;AGPL;LGPL;NGPL\" --summary"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"app-root-path": "^3.1.0",
+		"console-express-routes": "^1.0.2",
+		"crypto": "^1.0.1",
+		"express": "^4.18.2",
+		"lodash": "^4.17.21",
+		"luxon": "^3.4.4",
+		"snakecase-keys": "^5.5.0"
+	},
 	"devDependencies": {
 		"@commitlint/cli": "^18.4.1",
 		"@commitlint/config-conventional": "^18.4.0",
 		"@commitlint/types": "^18.4.0",
 		"@tsconfig/node16": "^16.1.1",
 		"@tsconfig/strictest": "^2.0.2",
+		"@types/express": "^4.17.21",
+		"@types/lodash": "^4.14.201",
+		"@types/luxon": "^3.3.4",
 		"@typescript-eslint/eslint-plugin": "^6.11.0",
 		"@typescript-eslint/parser": "^6.11.0",
 		"eslint": "^8.53.0",
@@ -41,9 +55,11 @@
 		"eslint-plugin-import": "^2.29.0",
 		"license-checker": "^25.0.1",
 		"lint-staged": "^15.1.0",
+		"nodemon": "^3.0.1",
 		"npm-check-updates": "^16.14.6",
 		"prettier": "^3.1.0",
 		"simple-git-hooks": "^2.9.0",
+		"supertest": "^6.3.3",
 		"typescript": "~5.2.2",
 		"vitest": "^0.34.6"
 	}
