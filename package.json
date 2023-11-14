@@ -7,7 +7,7 @@
 	"type": "module",
 	"scripts": {
 		"tsc:watch": "tsc --watch",
-		"build": "rm -rf ./dist & tsc",
+		"build": "yarn lint && yarn style && rm -rf ./dist && tsc",
 		"lint": "eslint . --ext .cjs,.mjs,.js,.ts,.cts,.mts",
 		"lint:fix": "eslint . --ext .cjs,.mjs,.js,.ts,.cts,.mts --fix",
 		"style": "prettier -c .",
