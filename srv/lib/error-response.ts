@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { DateTime } from 'luxon';
 import crypto from 'crypto';
 import snakecaseKeys from 'snakecase-keys';
-import type { ExpressHandlerError, CustomError } from '../types/express-error-handler.js';
+import type { ExpressHandlerError, CustomError } from '../types/express-handler.js';
 
 export default () => (req: Request, res: Response, next: NextFunction) => {
 	res.error = (error: ExpressHandlerError, seed?: string) => {

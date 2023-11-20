@@ -1,10 +1,10 @@
 import type { Application, Request, Response, NextFunction } from 'express';
 import { strict as assert } from 'assert';
-import type { ExpressHandlerError } from '../../types/express-error-handler.js';
+import type { ExpressHandlerError } from '../../types/express-handler.js';
 
 import planetscale from './v1/planetscale.js';
 
-const BASE_V1_API_PATH = `/api/v1/planetscale`;
+const BASE_V1_API_PATH = `/psdb.v1alpha1.Database`;
 
 export default (options: { app?: Application } = {}) => {
 	assert.ok(options.app, 'app must be required');

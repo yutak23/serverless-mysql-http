@@ -1,4 +1,4 @@
-import type { ExpressHandlerError } from './express-error-handler.js';
+import type { ExpressHandlerError } from './express-handler.js';
 
 declare module 'express-serve-static-core' {
 	interface Response {

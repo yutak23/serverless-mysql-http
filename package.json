@@ -12,6 +12,7 @@
 		"express": "node dist/app.js",
 		"test": "vitest run",
 		"mysqldump:schema": "docker exec -t mysql mysqldump -u root --databases for_vitest --no-data | sed -e 's/ AUTO_INCREMENT=[0-9]*//' > ./tests/sql/1_schema.sql",
+		"mysqldump:data": "docker exec -t mysql mysqldump -u root -t --databases for_vitest --no-create-db > ./tests/sql/2_data.sql",
 		"lint": "eslint . --ext .cjs,.mjs,.js,.ts,.cts,.mts",
 		"lint:fix": "eslint . --ext .cjs,.mjs,.js,.ts,.cts,.mts --fix",
 		"style": "prettier -c .",
