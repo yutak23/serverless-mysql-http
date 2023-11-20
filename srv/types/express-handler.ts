@@ -20,6 +20,7 @@ export interface PlanetscaleBody {
 export interface ExtendedFieldPacket extends FieldPacket {
 	columnLength: number | null;
 	characterSet: number | null;
+	typeName: string;
 }
 
 export interface QueryResultFieldExcerpt {
@@ -30,4 +31,16 @@ export interface QueryResultFieldExcerpt {
 	columnLength: number | null;
 	charset: number | null;
 	flags: number | null;
+	type: number;
+	typeName?: string; // not exist in mysql2
+}
+
+export interface ResultSetHeader {
+	fieldCount: number;
+	affectedRows: number;
+	insertId: number;
+	info: string;
+	serverStatus: number;
+	warningStatus: number;
+	changedRows: number;
 }

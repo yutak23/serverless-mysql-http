@@ -44,7 +44,9 @@ describe('Fields converter', () => {
 			database: 'for_vitest',
 			columnLength: 10,
 			charset: 63,
-			flags: 16931
+			flags: 16931,
+			type: 3,
+			typeName: 'LONG'
 		},
 		{
 			name: 'name',
@@ -53,7 +55,9 @@ describe('Fields converter', () => {
 			database: 'for_vitest',
 			columnLength: 256,
 			charset: 224,
-			flags: 4097
+			flags: 4097,
+			type: 253,
+			typeName: 'VAR_STRING'
 		},
 		{
 			name: 'address',
@@ -62,7 +66,9 @@ describe('Fields converter', () => {
 			database: 'for_vitest',
 			columnLength: 512,
 			charset: 224,
-			flags: 0
+			flags: 0,
+			type: 253,
+			typeName: 'VAR_STRING'
 		},
 		{
 			name: 'stars',
@@ -71,7 +77,9 @@ describe('Fields converter', () => {
 			database: 'for_vitest',
 			columnLength: 12,
 			charset: 63,
-			flags: 0
+			type: 245,
+			flags: 0,
+			typeName: 'JSON'
 		}
 	];
 
@@ -91,5 +99,33 @@ describe('Fields converter', () => {
 		expect(fields).toHaveProperty('[1].type', 'VARCHAR'); // name
 		expect(fields).toHaveProperty('[2].type', 'VARCHAR'); // address
 		expect(fields).toHaveProperty('[3].type', 'FLOAT32'); // stars
+	});
+
+	describe('sqlDefinitions is empty array', () => {
+		it('type: 8(LONGLONG)', () => {
+			const fields = fieldsConverter(
+				[],
+				[
+					{
+						name: 'COUNT(`id`)',
+						table: '',
+						orgTable: '',
+						database: 'for_vitest',
+						columnLength: 21,
+						charset: 63,
+						flags: 129,
+						type: 8
+					}
+				],
+				'dumyDtabaseName',
+				'dumyTableName'
+			);
+
+			fields.forEach((field: Field) => {
+				expect(field).toHaveProperty('name', expect.any(String));
+			});
+
+			expect(fields).toHaveProperty('[0].type', 'INT64'); // COUNT(`id`)
+		});
 	});
 });

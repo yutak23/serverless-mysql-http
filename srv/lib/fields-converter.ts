@@ -2,7 +2,6 @@ import type { Field } from '@planetscale/database';
 import type { QueryResultFieldExcerpt } from '../types/express-handler.js';
 
 export { Field };
-// https://vitess.io/files/version-pdfs/Vitess-Docs-6.0-04-29-2020.pdf
 export type VitessDataType =
 	| 'NULL_TYPE'
 	| 'INT8'
@@ -45,7 +44,94 @@ export interface SqlDefinition {
 	Extra: string;
 }
 
+// https://github.com/mysqljs/mysql/blob/v2.18.1/lib/protocol/constants/types.js
+const mapNumberToMySQLType = (typeNumber: number): string => {
+	let type;
+
+	switch (typeNumber) {
+		case 0: // DECIMAL
+		case 246: // NEWDECIMAL
+			type = 'DECIMAL';
+			break;
+		case 1: // TINY
+			type = 'TINY';
+			break;
+		case 2: // SHORT
+			type = 'SHORT';
+			break;
+		case 3: // LONG
+			type = 'LONG';
+			break;
+		case 4: // FLOAT
+			type = 'FLOAT';
+			break;
+		case 5: // DOUBLE
+			type = 'DOUBLE';
+			break;
+		case 6: // NULL
+			return 'NULL_TYPE';
+		case 7: // TIMESTAMP
+		case 17: // TIMESTAMP2
+			type = 'TIMESTAMP';
+			break;
+		case 8: // LONGLONG
+			type = 'LONGLONG';
+			break;
+		case 9: // INT24
+			type = 'INT24';
+			break;
+		case 10: // DATE
+		case 14: // NEWDATE
+			type = 'DATE';
+			break;
+		case 11: // TIME
+		case 19: // TIME2
+			type = 'TIME';
+			break;
+		case 12: // DATETIME
+		case 18: // DATETIME2
+			type = 'DATETIME';
+			break;
+		case 13: // YEAR
+			type = 'YEAR';
+			break;
+		case 15: // VARCHAR
+		case 253: // VAR_STRING
+		case 254: // STRING
+			type = 'VARCHAR';
+			break;
+		case 16: // BIT
+			type = 'BIT';
+			break;
+		case 245: // JSON
+			type = 'JSON';
+			break;
+		case 247: // ENUM
+			type = 'ENUM';
+			break;
+		case 248: // SET
+			type = 'SET';
+			break;
+		case 249: // TINY_BLOB
+		case 250: // MEDIUM_BLOB
+		case 251: // LONG_BLOB
+		case 252: // BLOB
+			type = 'BLOB';
+			break;
+		case 255: // GEOMETRY
+			type = 'GEOMETRY';
+			break;
+		default:
+			return 'NULL_TYPE';
+	}
+
+	return type;
+};
+
+// https://vitess.io/files/version-pdfs/Vitess-Docs-6.0-04-29-2020.pdf
+// https://github.com/mysqljs/mysql/blob/v2.18.1/lib/protocol/constants/types.js
 function mapMySQLToVitessType(mysqlType: string): VitessDataType {
+	console.log(mysqlType);
 	const upperCasedType = mysqlType.toUpperCase();
 	let type = upperCasedType.toUpperCase().split(/\s+/)[0];
 
@@ -54,15 +140,20 @@ function mapMySQLToVitessType(mysqlType: string): VitessDataType {
 
 	switch (type) {
 		case 'TINYINT':
+		case 'TINY':
 			return upperCasedType.includes('UNSIGNED') ? 'UINT8' : 'INT8';
 		case 'SMALLINT':
+		case 'SHORT':
 			return upperCasedType.includes('UNSIGNED') ? 'UINT16' : 'INT16';
 		case 'MEDIUMINT':
+		case 'INT24':
 			return upperCasedType.includes('UNSIGNED') ? 'UINT24' : 'INT24';
 		case 'INT':
 		case 'INTEGER':
+		case 'LONG':
 			return upperCasedType.includes('UNSIGNED') ? 'UINT32' : 'INT32';
 		case 'BIGINT':
+		case 'LONGLONG':
 			return upperCasedType.includes('UNSIGNED') ? 'UINT64' : 'INT64';
 		case 'FLOAT':
 			return 'FLOAT32';
@@ -71,22 +162,32 @@ function mapMySQLToVitessType(mysqlType: string): VitessDataType {
 			return 'FLOAT64';
 		case 'DECIMAL':
 		case 'NUMERIC':
+		case 'NEWDECIMAL':
 			return 'DECIMAL';
 		case 'DATE':
+		case 'NEWDATE':
 			return 'DATE';
 		case 'TIMESTAMP':
+		case 'TIMESTAMP2':
 			return 'TIMESTAMP';
 		case 'TIME':
+		case 'TIME2':
 			return 'TIME';
 		case 'DATETIME':
+		case 'DATETIME2':
 			return 'DATETIME';
 		case 'YEAR':
 			return 'YEAR';
 		case 'CHAR':
 			return 'CHAR';
 		case 'VARCHAR':
+		case 'VAR_STRING':
+		case 'STRING':
 			return 'VARCHAR';
 		case 'BLOB':
+		case 'TINY_BLOB':
+		case 'MEDIUM_BLOB':
+		case 'LONG_BLOB':
 			return 'BLOB';
 		case 'TEXT':
 			return 'TEXT';
@@ -117,17 +218,20 @@ export default (
 ): Field[] => {
 	const typeMapping: Field[] = [];
 
-	sqlDefinitions.forEach(({ Field, Type }) => {
-		const field = fields.find((f) => f.name === Field);
+	fields.forEach(({ name, type, table, orgTable, database, columnLength, charset }) => {
+		const sqlDef = sqlDefinitions.find((def) => def.Field === name);
+
 		typeMapping.push({
-			name: Field,
-			type: mapMySQLToVitessType(Type),
-			table: field ? field.table : tableName,
-			orgTable: field ? field.orgTable : tableName,
-			database: field ? field.database : databaseName,
-			orgName: Field,
-			columnLength: field ? field.columnLength : 0,
-			charset: field ? field.charset : 0
+			name: name.toLocaleLowerCase().replaceAll('`', ''),
+			type: sqlDef
+				? mapMySQLToVitessType(sqlDef.Type)
+				: mapMySQLToVitessType(mapNumberToMySQLType(type)),
+			table: table || tableName,
+			orgTable: orgTable || tableName,
+			database: database || databaseName,
+			orgName: name.toLocaleLowerCase().replaceAll('`', ''),
+			columnLength: columnLength || 0,
+			charset: charset || 0
 		});
 	});
 
