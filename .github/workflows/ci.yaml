@@ -12,6 +12,16 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0.32
+        env:
+          MYSQL_ROOT_PASSWORD: ''
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          TZ: 'UTC'
+        ports:
+          - 3306:3306
+
     steps:
       - uses: actions/checkout@v3
 
@@ -30,7 +40,7 @@ jobs:
         run: yarn express &
 
       - name: Wait for server
-        run: curl --retry 10 --retry-connrefused --retry-delay 5 --retry-max-time 60 http://localhost:3000/api/v1/planetscale
+        run: curl --retry 10 --retry-connrefused --retry-delay 5 --retry-max-time 60 http://localhost:3000/healthcheck
 
       - name: Test
         run: yarn test
