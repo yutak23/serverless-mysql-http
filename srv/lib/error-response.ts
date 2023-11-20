@@ -1,11 +1,10 @@
 import type { NextFunction, Request, Response } from 'express';
 import { DateTime } from 'luxon';
-import crypto from 'crypto';
 import snakecaseKeys from 'snakecase-keys';
-import type { ExpressHandlerError, CustomError } from '../types/express-handler.js';
+import type { ExpressHandlerError } from '../types/express-handler.js';
 
-export default () => (req: Request, res: Response, next: NextFunction) => {
-	res.error = (error: ExpressHandlerError, seed?: string) => {
+export default () => (_req: Request, res: Response, next: NextFunction) => {
+	res.error = (error: ExpressHandlerError, databaseName?: string) => {
 		console.error(
 			JSON.stringify(
 				{
@@ -22,37 +21,16 @@ export default () => (req: Request, res: Response, next: NextFunction) => {
 
 		if (error.status) res.status(error.status);
 		if (!res.statusCode) res.status(500);
-		// for Sequelize Errors
-		if (error.name === 'SequelizeUniqueConstraintError') res.status(409);
 
-		const code = crypto
-			.createHash('md5')
-			.update(
-				[req.method.toUpperCase(), req.baseUrl, res.statusCode, seed || error?.seed].join(':')
-			)
-			.digest('hex');
-
+		// https://github.com/planetscale/database-js/blob/v1.11.0/src/index.ts#L9-L12
 		const errorResBody: {
-			statusCode: number;
-			code: string;
-			path: string;
-			message: string;
-			errors: Array<{ message: string }>;
+			error: { code: string; message: string };
 		} = {
-			statusCode: res.statusCode,
-			code,
-			path: `${req.method}:${req.originalUrl}`,
-			message: error.message,
-			errors: []
+			error: {
+				code: 'UNKNOWN',
+				message: `target: ${databaseName}: vttablet: rpc error: code = ${error.code} desc = ${error.sqlMessage} (errno ${error.errno}) (sqlstate '${error.sqlState}') (CallerID: serverless-mysql-http): Sql: "${error.sql}", BindVars: {REDACTED}`
+			}
 		};
-		if (error.errors && Array.isArray(error.errors))
-			error.errors.forEach((e: CustomError) => {
-				const messages = [];
-				if (e.path) messages.push(e.path);
-				messages.push(e.message);
-				errorResBody.errors.push({ message: messages.join(' : ') });
-			});
-		if (!errorResBody.errors.length) errorResBody.errors.push({ message: error.message });
 
 		res.json(snakecaseKeys(errorResBody));
 	};

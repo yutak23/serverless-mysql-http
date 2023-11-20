@@ -103,102 +103,104 @@ describe('Planetscale API', () => {
 		connection = connect(config);
 	});
 
-	it('SELECT * FROM hotels ORDER BY `id` ASC LIMIT 1;', async () => {
-		const results: ExecutedQuery = await connection.execute(
-			'SELECT * FROM hotels ORDER BY `id` ASC LIMIT 1;'
-		);
+	describe('basic SELECT', () => {
+		it('SELECT * FROM hotels ORDER BY `id` ASC LIMIT 1;', async () => {
+			const results: ExecutedQuery = await connection.execute(
+				'SELECT * FROM hotels ORDER BY `id` ASC LIMIT 1;'
+			);
 
-		expect(results.headers).toEqual(headers);
-		expect(results.types).toEqual(types);
-		expect(results.rows).toEqual([
-			{
-				id: 1,
-				name: '日本ホテル',
-				address: '東京都千代田区1-1',
-				stars: 4.2,
-				created_at: '2023-11-20 02:53:56',
-				updated_at: '2023-11-20 02:53:56',
-				address_json: {
-					area: {
-						area: { area: '内幸町1-1-1', city: '千代田区', prefecture: '東京都' },
+			expect(results.headers).toEqual(headers);
+			expect(results.types).toEqual(types);
+			expect(results.rows).toEqual([
+				{
+					id: 1,
+					name: '日本ホテル',
+					address: '東京都千代田区1-1',
+					stars: 4.2,
+					created_at: '2023-11-20 02:53:56',
+					updated_at: '2023-11-20 02:53:56',
+					address_json: {
+						area: {
+							area: { area: '内幸町1-1-1', city: '千代田区', prefecture: '東京都' },
+							city: '千代田区',
+							prefecture: '東京都'
+						},
 						city: '千代田区',
 						prefecture: '東京都'
-					},
-					city: '千代田区',
-					prefecture: '東京都'
+					}
 				}
-			}
-		]);
-		expect(results.fields).toEqual(fields);
-		expect(results.size).toBe(1);
-		expect(results.statement).toBe('SELECT * FROM hotels ORDER BY `id` ASC LIMIT 1;');
-		expect(results.insertId).toBe('0');
-		expect(results.rowsAffected).toBe(0);
-		expect(results.time).toEqual(expect.any(Number));
-	});
+			]);
+			expect(results.fields).toEqual(fields);
+			expect(results.size).toBe(1);
+			expect(results.statement).toBe('SELECT * FROM hotels ORDER BY `id` ASC LIMIT 1;');
+			expect(results.insertId).toBe('0');
+			expect(results.rowsAffected).toBe(0);
+			expect(results.time).toEqual(expect.any(Number));
+		});
 
-	it('SELECT * FROM hotels ORDER BY `id` ASC LIMIT 2;', async () => {
-		const results: ExecutedQuery = await connection.execute(
-			'SELECT * FROM hotels ORDER BY `id` ASC LIMIT 2;'
-		);
+		it('SELECT * FROM hotels ORDER BY `id` ASC LIMIT 2;', async () => {
+			const results: ExecutedQuery = await connection.execute(
+				'SELECT * FROM hotels ORDER BY `id` ASC LIMIT 2;'
+			);
 
-		expect(results.headers).toEqual(headers);
-		expect(results.types).toEqual(types);
-		expect(results.fields).toEqual(fields);
-		expect(results.rows).toEqual([
-			{
-				id: 1,
-				name: '日本ホテル',
-				address: '東京都千代田区1-1',
-				stars: 4.2,
-				created_at: '2023-11-20 02:53:56',
-				updated_at: '2023-11-20 02:53:56',
-				address_json: {
-					area: {
-						area: { area: '内幸町1-1-1', city: '千代田区', prefecture: '東京都' },
+			expect(results.headers).toEqual(headers);
+			expect(results.types).toEqual(types);
+			expect(results.fields).toEqual(fields);
+			expect(results.rows).toEqual([
+				{
+					id: 1,
+					name: '日本ホテル',
+					address: '東京都千代田区1-1',
+					stars: 4.2,
+					created_at: '2023-11-20 02:53:56',
+					updated_at: '2023-11-20 02:53:56',
+					address_json: {
+						area: {
+							area: { area: '内幸町1-1-1', city: '千代田区', prefecture: '東京都' },
+							city: '千代田区',
+							prefecture: '東京都'
+						},
 						city: '千代田区',
 						prefecture: '東京都'
-					},
-					city: '千代田区',
-					prefecture: '東京都'
+					}
+				},
+				{
+					id: 2,
+					name: 'Japan HOTEL',
+					address: '1-1, Chiyoda-ku, Tokyo',
+					stars: 4.3,
+					address_json: null,
+					created_at: '2023-11-20 04:06:46',
+					updated_at: '2023-11-20 04:06:46'
 				}
-			},
-			{
-				id: 2,
-				name: 'Japan HOTEL',
-				address: '1-1, Chiyoda-ku, Tokyo',
-				stars: 4.3,
-				address_json: null,
-				created_at: '2023-11-20 04:06:46',
-				updated_at: '2023-11-20 04:06:46'
-			}
-		]);
-		expect(results.size).toBe(2);
-		expect(results.statement).toBe('SELECT * FROM hotels ORDER BY `id` ASC LIMIT 2;');
-		expect(results.insertId).toBe('0');
-		expect(results.rowsAffected).toBe(0);
-		expect(results.time).toEqual(expect.any(Number));
+			]);
+			expect(results.size).toBe(2);
+			expect(results.statement).toBe('SELECT * FROM hotels ORDER BY `id` ASC LIMIT 2;');
+			expect(results.insertId).toBe('0');
+			expect(results.rowsAffected).toBe(0);
+			expect(results.time).toEqual(expect.any(Number));
+		});
 	});
 
-	it('SELECT COUNT(`id`) FROM hotels;', async () => {
-		const results: ExecutedQuery = await connection.execute('SELECT COUNT(`id`) FROM hotels;');
-		const count = Number(results.rows[0]['count(id)']);
+	describe('SELECT with MySQL function', () => {
+		it('SELECT COUNT(`id`) FROM hotels;', async () => {
+			const results: ExecutedQuery = await connection.execute('SELECT COUNT(`id`) FROM hotels;');
+			const count = Number(results.rows[0]['count(id)']);
 
-		expect(results.headers).toEqual(['count(id)']);
-		expect(results.types).toEqual({ 'count(id)': 'INT64' });
-		expect(results.fields).toHaveProperty('[0].name', 'count(id)');
-		expect(results.fields).toHaveProperty('[0].type', 'INT64');
-		expect(results.fields).toHaveProperty('[0].columnLength', 21);
-		expect(results.fields).toHaveProperty('[0].charset', 63);
-		expect(results.rows).toEqual([{ 'count(id)': `${count}` }]);
-		expect(results.size).toBe(1);
-		expect(results.statement).toBe('SELECT COUNT(`id`) FROM hotels;');
-		expect(results.insertId).toBe('0');
-		expect(results.rowsAffected).toBe(0);
-		expect(results.time).toEqual(expect.any(Number));
-	});
+			expect(results.headers).toEqual(['count(id)']);
+			expect(results.types).toEqual({ 'count(id)': 'INT64' });
+			expect(results.fields).toHaveProperty('[0].name', 'count(id)');
+			expect(results.fields).toHaveProperty('[0].type', 'INT64');
+			expect(results.fields).toHaveProperty('[0].columnLength', 21);
+			expect(results.fields).toHaveProperty('[0].charset', 63);
+			expect(results.rows).toEqual([{ 'count(id)': `${count}` }]);
+			expect(results.size).toBe(1);
+			expect(results.statement).toBe('SELECT COUNT(`id`) FROM hotels;');
+			expect(results.insertId).toBe('0');
+			expect(results.rowsAffected).toBe(0);
+			expect(results.time).toEqual(expect.any(Number));
+		});
 
-	describe('pet with MySQL function', () => {
 		// https://dev.mysql.com/doc/refman/8.0/en/date-calculations.html
 		it('SELECT name, birth, CURDATE(), TIMESTAMPDIFF(YEAR,birth,CURDATE()) AS age FROM pet;', async () => {
 			const results: ExecutedQuery = await connection.execute(

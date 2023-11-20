@@ -6,7 +6,8 @@ import type {
 	PlanetscaleBody,
 	ExtendedFieldPacket,
 	QueryResultFieldExcerpt,
-	ResultSetHeader
+	ResultSetHeader,
+	ExpressHandlerError
 } from '../../../types/express-handler.js';
 import fieldsConverter, { SqlDefinition } from '../../../lib/fields-converter.js';
 import encodeRow from '../../../lib/encode-row.js';
@@ -93,7 +94,11 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 			timing
 		});
 	} catch (error) {
-		return res.status(500).error(error as Error);
+		console.error(error);
+
+		if ((error as ExpressHandlerError).sqlState)
+			return res.status(200).error(error as Error, config.database);
+		return res.status(500).error(error as Error, config.database);
 	}
 }) as RequestHandler);
 
