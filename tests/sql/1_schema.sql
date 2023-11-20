@@ -41,6 +41,23 @@ CREATE TABLE `hotels` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `pet`
+--
+
+DROP TABLE IF EXISTS `pet`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pet` (
+  `name` varchar(20) DEFAULT NULL,
+  `owner` varchar(20) DEFAULT NULL,
+  `species` varchar(20) DEFAULT NULL,
+  `sex` char(1) DEFAULT NULL,
+  `birth` date DEFAULT NULL,
+  `death` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -51,4 +68,4 @@ CREATE TABLE `hotels` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-20  4:20:30
+-- Dump completed on 2023-11-20  8:19:38

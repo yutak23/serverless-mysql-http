@@ -34,7 +34,7 @@ export default (
 
 		// Planetscale timezone is UTC
 		const dt = DateTime.fromJSDate(data[key] as Date, { zone: 'utc' });
-		const dateType = fields.find((f) => f.name === key)?.type?.toUpperCase() || '';
+		const dateType = fields.find((f) => f.name === key.toLowerCase())?.type?.toUpperCase() || '';
 		if (dt.isValid && ['TIMESTAMP', 'DATE', 'DATETIME'].includes(dateType)) {
 			let dtStr;
 			switch (dateType) {

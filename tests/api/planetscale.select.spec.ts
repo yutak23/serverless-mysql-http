@@ -197,4 +197,124 @@ describe('Planetscale API', () => {
 		expect(results.rowsAffected).toBe(0);
 		expect(results.time).toEqual(expect.any(Number));
 	});
+
+	describe('pet with MySQL function', () => {
+		// https://dev.mysql.com/doc/refman/8.0/en/date-calculations.html
+		it('SELECT name, birth, CURDATE(), TIMESTAMPDIFF(YEAR,birth,CURDATE()) AS age FROM pet;', async () => {
+			const results: ExecutedQuery = await connection.execute(
+				'SELECT name, birth, CURDATE(), TIMESTAMPDIFF(YEAR,birth,CURDATE()) AS age FROM pet;'
+			);
+
+			expect(results.headers).toEqual(['name', 'birth', 'curdate()', 'age']);
+			expect(results.types).toEqual({
+				name: 'VARCHAR',
+				birth: 'DATE',
+				'curdate()': 'DATE',
+				age: 'INT64'
+			});
+			expect(results.fields).toEqual([
+				{
+					name: 'name',
+					type: 'VARCHAR',
+					table: 'pet',
+					orgTable: 'pet',
+					database: 'for_vitest',
+					orgName: 'name',
+					columnLength: 80,
+					charset: 224
+				},
+				{
+					name: 'birth',
+					type: 'DATE',
+					table: 'pet',
+					orgTable: 'pet',
+					database: 'for_vitest',
+					orgName: 'birth',
+					columnLength: 10,
+					charset: 63
+				},
+				{
+					name: 'curdate()',
+					type: 'DATE',
+					table: 'pet',
+					orgTable: 'pet',
+					database: 'for_vitest',
+					orgName: 'curdate()',
+					columnLength: 10,
+					charset: 63
+				},
+				{
+					name: 'age',
+					type: 'INT64',
+					table: 'pet',
+					orgTable: 'pet',
+					database: 'for_vitest',
+					orgName: 'age',
+					columnLength: 21,
+					charset: 63
+				}
+			]);
+			expect(results.rows).toEqual([
+				{
+					name: 'Fluffy',
+					birth: '1993-02-04',
+					'curdate()': '2023-11-20',
+					age: '30'
+				},
+				{
+					name: 'Claws',
+					birth: '1994-03-17',
+					'curdate()': '2023-11-20',
+					age: '29'
+				},
+				{
+					name: 'Buffy',
+					birth: '1989-05-13',
+					'curdate()': '2023-11-20',
+					age: '34'
+				},
+				{
+					name: 'Fang',
+					birth: '1990-08-27',
+					'curdate()': '2023-11-20',
+					age: '33'
+				},
+				{
+					name: 'Bowser',
+					birth: '1979-08-31',
+					'curdate()': '2023-11-20',
+					age: '44'
+				},
+				{
+					name: 'Chirpy',
+					birth: '1998-09-11',
+					'curdate()': '2023-11-20',
+					age: '25'
+				},
+				{
+					name: 'Whistler',
+					birth: '1997-12-09',
+					'curdate()': '2023-11-20',
+					age: '25'
+				},
+				{
+					name: 'Slim',
+					birth: '1996-04-29',
+					'curdate()': '2023-11-20',
+					age: '27'
+				},
+				{
+					name: 'Puffball',
+					birth: '1999-03-30',
+					'curdate()': '2023-11-20',
+					age: '24'
+				}
+			]);
+			expect(results.size).toBe(9);
+			expect(results.statement).toEqual(expect.any(String));
+			expect(results.insertId).toBe('0');
+			expect(results.rowsAffected).toBe(0);
+			expect(results.time).toEqual(expect.any(Number));
+		});
+	});
 });

@@ -131,7 +131,6 @@ const mapNumberToMySQLType = (typeNumber: number): string => {
 // https://vitess.io/files/version-pdfs/Vitess-Docs-6.0-04-29-2020.pdf
 // https://github.com/mysqljs/mysql/blob/v2.18.1/lib/protocol/constants/types.js
 function mapMySQLToVitessType(mysqlType: string): VitessDataType {
-	console.log(mysqlType);
 	const upperCasedType = mysqlType.toUpperCase();
 	let type = upperCasedType.toUpperCase().split(/\s+/)[0];
 
@@ -222,14 +221,14 @@ export default (
 		const sqlDef = sqlDefinitions.find((def) => def.Field === name);
 
 		typeMapping.push({
-			name: name.toLocaleLowerCase().replaceAll('`', ''),
+			name: name.toLowerCase().replaceAll('`', ''),
 			type: sqlDef
 				? mapMySQLToVitessType(sqlDef.Type)
 				: mapMySQLToVitessType(mapNumberToMySQLType(type)),
 			table: table || tableName,
 			orgTable: orgTable || tableName,
 			database: database || databaseName,
-			orgName: name.toLocaleLowerCase().replaceAll('`', ''),
+			orgName: name.toLowerCase().replaceAll('`', ''),
 			columnLength: columnLength || 0,
 			charset: charset || 0
 		});
