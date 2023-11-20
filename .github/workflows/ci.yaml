@@ -21,6 +21,11 @@ jobs:
           TZ: 'UTC'
         ports:
           - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=10s
+          --health-retries=3
 
     steps:
       - uses: actions/checkout@v3
@@ -29,6 +34,13 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
+
+      - name: Initialize database
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-client
+          mysql -h 127.0.0.1 -u root < tests/sql/1_schema.sql
+          mysql -h 127.0.0.1 -u root < tests/sql/2_data.sql
 
       - name: Install
         run: yarn install --frozen-lockfile
