@@ -112,4 +112,7 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 	}
 }) as RequestHandler);
 
+router.post('/CreateSession', ((_req: Request, res: Response) =>
+	res.status(200).json({ session: null })) as RequestHandler);
+
 export default router;
