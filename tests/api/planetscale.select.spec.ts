@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { beforeAll, describe, expect, it } from 'vitest';
 import { Connection, ExecutedQuery, connect } from '@planetscale/database';
 
@@ -260,55 +261,55 @@ describe('Planetscale API', () => {
 				{
 					name: 'Fluffy',
 					birth: '1993-02-04',
-					'curdate()': '2023-11-20',
+					'curdate()': expect.any(String),
 					age: '30'
 				},
 				{
 					name: 'Claws',
 					birth: '1994-03-17',
-					'curdate()': '2023-11-20',
+					'curdate()': expect.any(String),
 					age: '29'
 				},
 				{
 					name: 'Buffy',
 					birth: '1989-05-13',
-					'curdate()': '2023-11-20',
+					'curdate()': expect.any(String),
 					age: '34'
 				},
 				{
 					name: 'Fang',
 					birth: '1990-08-27',
-					'curdate()': '2023-11-20',
+					'curdate()': expect.any(String),
 					age: '33'
 				},
 				{
 					name: 'Bowser',
 					birth: '1979-08-31',
-					'curdate()': '2023-11-20',
+					'curdate()': expect.any(String),
 					age: '44'
 				},
 				{
 					name: 'Chirpy',
 					birth: '1998-09-11',
-					'curdate()': '2023-11-20',
+					'curdate()': expect.any(String),
 					age: '25'
 				},
 				{
 					name: 'Whistler',
 					birth: '1997-12-09',
-					'curdate()': '2023-11-20',
+					'curdate()': expect.any(String),
 					age: '25'
 				},
 				{
 					name: 'Slim',
 					birth: '1996-04-29',
-					'curdate()': '2023-11-20',
+					'curdate()': expect.any(String),
 					age: '27'
 				},
 				{
 					name: 'Puffball',
 					birth: '1999-03-30',
-					'curdate()': '2023-11-20',
+					'curdate()': expect.any(String),
 					age: '24'
 				}
 			]);

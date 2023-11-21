@@ -1,12 +1,22 @@
 import type { FieldPacket } from 'mysql2/promise';
 
-export interface ExpressHandlerError extends Error {
+export interface ExpressHandlerSqlError extends Error {
 	status?: number;
 	code?: string;
 	errno?: number;
 	sql?: string;
 	sqlState?: string;
 	sqlMessage?: string;
+}
+
+export interface ExpressHandlerError extends Error {
+	status?: number;
+	seed?: string;
+	errors?: Array<CustomError>;
+}
+
+export interface CustomError extends Error {
+	path?: string;
 }
 
 export interface PlanetscaleBody {
