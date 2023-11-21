@@ -18,7 +18,13 @@ Object.keys(routes).forEach((route: string) => {
 // If it does not match any existing path
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use('*', (_req: Request, res: Response, _next: NextFunction) => {
-	res.status(404).error(new Error(`only support '/psdb.v1alpha1.Database/Execute' path`));
+	res
+		.status(404)
+		.error(
+			new Error(
+				`only support '/psdb.v1alpha1.Database/Execute' and '/psdb.v1alpha1.Database/CreateSession' path`
+			)
+		);
 });
 
 app.listen(PORT, () => {
