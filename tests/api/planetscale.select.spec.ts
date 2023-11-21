@@ -181,6 +181,22 @@ describe('Planetscale API', () => {
 			expect(results.rowsAffected).toBe(0);
 			expect(results.time).toEqual(expect.any(Number));
 		});
+
+		it('result rows is 0 : SELECT * FROM hotels WHERE id = 1000;', async () => {
+			const results: ExecutedQuery = await connection.execute(
+				'SELECT * FROM hotels WHERE id = 1000;'
+			);
+
+			expect(results.headers).toEqual(headers);
+			expect(results.types).toEqual(types);
+			expect(results.fields).toEqual(fields);
+			expect(results.rows).toEqual([]);
+			expect(results.size).toBe(0);
+			expect(results.statement).toEqual(expect.any(String));
+			expect(results.insertId).toBe('0');
+			expect(results.rowsAffected).toBe(0);
+			expect(results.time).toEqual(expect.any(Number));
+		});
 	});
 
 	describe('SELECT with MySQL function', () => {

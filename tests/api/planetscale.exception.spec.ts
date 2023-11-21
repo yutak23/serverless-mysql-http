@@ -29,7 +29,7 @@ describe('Planetscale API', () => {
 		connection = connect(config);
 	});
 
-	it('NotFound tavle', async () => {
+	it('NotFound table', async () => {
 		let res;
 		try {
 			res = await connection.execute(`SELECT * FROM hoge;`);
@@ -41,5 +41,19 @@ describe('Planetscale API', () => {
 		expect(res).toHaveProperty('body.code', 'UNKNOWN');
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 		expect(res.body.message).toMatch(/Table 'for_vitest\.hoge' doesn't exist/);
+	});
+
+	it('NotFound column', async () => {
+		let res;
+		try {
+			res = await connection.execute(`SELECT hoge FROM hotels;`);
+		} catch (error) {
+			res = error as ErrorResponse;
+		}
+
+		expect(res).toHaveProperty('status', 400);
+		expect(res).toHaveProperty('body.code', 'UNKNOWN');
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+		expect(res.body.message).toMatch(/Unknown column 'hoge' in 'field list'/);
 	});
 });
