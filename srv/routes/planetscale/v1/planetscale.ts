@@ -26,11 +26,23 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 		timezone: 'UTC' // Planetscale timezone is UTC
 	};
 	const { query } = req.body;
-	const regex = /delete\s+from/i;
+	const deleteRegex = /delete\s+from/i;
+	const boostCachedQueriesRegex = /set\s+@@boost_cached_queries/i;
+
+	const start = DateTime.now();
 
 	try {
+		if (boostCachedQueriesRegex.test(query))
+			return res.status(200).json({
+				result: {
+					rowsAffected: 0,
+					insertId: '0'
+				},
+				timing: DateTime.now().diff(start, 'milliseconds').milliseconds
+			});
+
 		const connection = await mysql.createConnection(config);
-		const isDeleteQuery = regex.test(query);
+		const isDeleteQuery = deleteRegex.test(query);
 
 		let deletedAffectedRows;
 		if (isDeleteQuery) {
@@ -39,8 +51,6 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 			const rows = countResult[0] as Record<string, unknown>[];
 			deletedAffectedRows = rows[0]?.['count'];
 		}
-
-		const start = DateTime.now();
 
 		const queryResult = await connection.query(query);
 		const rows = queryResult[0] as Record<string, unknown>[];
@@ -56,9 +66,9 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 						? deletedAffectedRows // Planetscale returns for DELETE
 						: result.affectedRows.toString(),
 					insertId: result.insertId.toString()
-				}
+				},
+				timing
 				// session,
-				// error
 			});
 		}
 
@@ -91,7 +101,6 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 				insertId: null
 			},
 			// session,
-			// error
 			timing
 		});
 	} catch (error) {
