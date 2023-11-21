@@ -12,23 +12,22 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.0.32
-        env:
-          MYSQL_ROOT_PASSWORD: ''
-          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-          TZ: 'UTC'
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=10s
-          --health-retries=3
+    strategy:
+      fail-fast: false
+      matrix:
+        mysql-version: ['5.7', '8.0', '8.2']
+    name: mysql-version_${{ matrix.mysql-version }}_test
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup MySQL Server
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          mysql version: ${{ matrix.mysql-version }}
+          host port: 3306
+          container port: 3306
+          mysql root password: ''
 
       - uses: actions/setup-node@v3
         with:
