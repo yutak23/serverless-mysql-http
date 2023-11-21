@@ -15,19 +15,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mysql-version: ['5.7', '8.0', '8.2']
+        mysql-version: ['mysql:5.7', 'mysql:8.0', 'mysql:8.2']
     name: mysql-version_${{ matrix.mysql-version }}_test
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Setup MySQL Server
-        uses: mirromutth/mysql-action@v1.1
-        with:
-          mysql version: ${{ matrix.mysql-version }}
-          host port: 3306
-          container port: 3306
-          mysql root password: ''
+        run: docker run -d -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -v $PWD/data/mysql:/var/lib/mysql/ -v $PWD/mysql/my.cnf:/etc/mysql/conf.d/my.cnf -p 3306:3306 ${{ matrix.mysql-version }}
 
       - uses: actions/setup-node@v3
         with:
