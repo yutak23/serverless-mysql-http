@@ -184,7 +184,8 @@ describe('Planetscale API', () => {
 
 		it('result rows is 0 : SELECT * FROM hotels WHERE id = 1000;', async () => {
 			const results: ExecutedQuery = await connection.execute(
-				'SELECT * FROM hotels WHERE id = 1000;'
+				'SELECT * FROM hotels WHERE id = ?;',
+				[42]
 			);
 
 			expect(results.headers).toEqual(headers);
@@ -334,6 +335,91 @@ describe('Planetscale API', () => {
 			expect(results.insertId).toBe('0');
 			expect(results.rowsAffected).toBe(0);
 			expect(results.time).toEqual(expect.any(Number));
+		});
+	});
+
+	describe('SELECT with transaction and lock', () => {
+		describe('SELECT FOR UPDATE', () => {
+			it("SELECT * FROM hotels WHERE id = 1 FOR UPDATE; and UPDATE hotels SET address = '北海道札幌市1-1' WHERE id = 1;", async () => {
+				const results: ExecutedQuery[] = await connection.transaction(async (tx) => {
+					const selectHotels = await tx.execute('SELECT * FROM hotels WHERE id = :id FOR UPDATE;', {
+						id: 1
+					});
+					const updateHotels = await tx.execute(
+						`UPDATE hotels SET address = '北海道札幌市1-1' WHERE id = ?;`,
+						[1]
+					);
+					return [selectHotels, updateHotels];
+				});
+
+				expect(results[0].headers).toEqual(headers);
+				expect(results[0].types).toEqual(types);
+				expect(results[0].fields).toEqual(fields);
+				expect(results[0].rows).toEqual([
+					{
+						id: 1,
+						name: '日本ホテル',
+						address: '東京都千代田区1-1',
+						stars: 4.2,
+						created_at: '2023-11-20 02:53:56',
+						updated_at: expect.any(String),
+						address_json: {
+							area: {
+								area: { area: '内幸町1-1-1', city: '千代田区', prefecture: '東京都' },
+								city: '千代田区',
+								prefecture: '東京都'
+							},
+							city: '千代田区',
+							prefecture: '東京都'
+						}
+					}
+				]);
+				expect(results[0].size).toBe(1);
+				expect(results[0].statement).toBe(`SELECT * FROM hotels WHERE id = 1 FOR UPDATE;`);
+				expect(results[0].insertId).toBe('0');
+				expect(results[0].rowsAffected).toBe(0);
+				expect(results[0].time).toEqual(expect.any(Number));
+
+				expect(results[1].headers).toEqual([]);
+				expect(results[1].types).toEqual({});
+				expect(results[1].fields).toEqual([]);
+				expect(results[1].rows).toEqual([]);
+				expect(results[1].size).toBe(0);
+				expect(results[1].statement).toBe(
+					`UPDATE hotels SET address = '北海道札幌市1-1' WHERE id = 1;`
+				);
+				expect(results[1].insertId).toBe('0');
+				expect(results[1].rowsAffected).toBe(1);
+				expect(results[1].time).toEqual(expect.any(Number));
+			});
+		});
+
+		describe('Confirm result', () => {
+			it('SELECT * FROM hotels WHERE id = 1;', async () => {
+				const results: ExecutedQuery = await connection.execute(
+					'SELECT * FROM hotels WHERE id = ?;',
+					[1]
+				);
+				expect(results.rows).toHaveProperty('[0].address', '北海道札幌市1-1');
+			});
+		});
+
+		describe('Terndown', () => {
+			it('UPDATE hotels SET  WHERE id = 1;', async () => {
+				const results: ExecutedQuery = await connection.execute(
+					`UPDATE hotels SET address = '東京都千代田区1-1' WHERE id = ?;`,
+					[1]
+				);
+				expect(results.rowsAffected).toBe(1);
+			});
+
+			it('SELECT * FROM hotels WHERE id = 1;', async () => {
+				const results: ExecutedQuery = await connection.execute(
+					'SELECT * FROM hotels WHERE id = ?;',
+					[1]
+				);
+				expect(results.rows).toHaveProperty('[0].address', '東京都千代田区1-1');
+			});
 		});
 	});
 });
