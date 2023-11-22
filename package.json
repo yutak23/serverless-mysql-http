@@ -15,8 +15,8 @@
 		"mysqldump:data": "docker exec -t mysql mysqldump -u root -t --databases for_vitest --no-create-db > ./tests/sql/2_data.sql",
 		"lint": "eslint . --ext .cjs,.mjs,.js,.ts,.cts,.mts",
 		"lint:fix": "eslint . --ext .cjs,.mjs,.js,.ts,.cts,.mts --fix",
-		"style": "prettier -c .",
-		"style:fix": "prettier --write .",
+		"style": "prettier --ignore-unknown -c . '!./data'",
+		"style:fix": "prettier --ignore-unknown --write . '!./data'",
 		"prepare": "npx simple-git-hooks"
 	},
 	"simple-git-hooks": {
