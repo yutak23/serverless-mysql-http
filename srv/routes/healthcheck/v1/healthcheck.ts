@@ -10,7 +10,7 @@ router.get('', (async (_req: Request, res: Response) => {
 		port: Number(process.env['MYSQL_PORT']) || 3306,
 		user: process.env['MYSQL_USER'] || 'root',
 		password: process.env['MYSQL_PASSWORD'] || '',
-		database: process.env['MYSQL_DATABASE'] || 'for_vitest',
+		database: process.env['MYSQL_DATABASE'] || 'sample_db',
 		timezone: 'UTC' // Planetscale timezone is UTC
 	};
 

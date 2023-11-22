@@ -40,7 +40,7 @@ describe('Planetscale API', () => {
 		expect(res).toHaveProperty('status', 400);
 		expect(res).toHaveProperty('body.code', 'UNKNOWN');
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		expect(res.body.message).toMatch(/Table 'for_vitest\.hoge' doesn't exist/);
+		expect(res.body.message).toMatch(/Table 'sample_db\.hoge' doesn't exist/);
 	});
 
 	it('NotFound column', async () => {

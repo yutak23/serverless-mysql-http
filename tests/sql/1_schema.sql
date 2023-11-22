@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.32, for Linux (x86_64)
 --
--- Host: localhost    Database: for_vitest
+-- Host: localhost    Database: sample_db
 -- ------------------------------------------------------
 -- Server version	8.0.32
 
@@ -16,12 +16,12 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `for_vitest`
+-- Current Database: `sample_db`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `for_vitest` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `sample_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 
-USE `for_vitest`;
+USE `sample_db`;
 
 --
 -- Table structure for table `hotels`

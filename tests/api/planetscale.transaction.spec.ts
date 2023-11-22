@@ -29,7 +29,7 @@ const fields = [
 		type: 'UINT32',
 		table: 'hotels',
 		orgTable: 'hotels',
-		database: 'for_vitest',
+		database: 'sample_db',
 		orgName: 'id',
 		columnLength: 10,
 		charset: 63
@@ -39,7 +39,7 @@ const fields = [
 		type: 'VARCHAR',
 		table: 'hotels',
 		orgTable: 'hotels',
-		database: 'for_vitest',
+		database: 'sample_db',
 		orgName: 'name',
 		columnLength: 256,
 		charset: 224
@@ -49,7 +49,7 @@ const fields = [
 		type: 'VARCHAR',
 		table: 'hotels',
 		orgTable: 'hotels',
-		database: 'for_vitest',
+		database: 'sample_db',
 		orgName: 'address',
 		columnLength: 512,
 		charset: 224
@@ -59,7 +59,7 @@ const fields = [
 		type: 'JSON',
 		table: 'hotels',
 		orgTable: 'hotels',
-		database: 'for_vitest',
+		database: 'sample_db',
 		orgName: 'address_json',
 		columnLength: 4294967295,
 		charset: 63
@@ -69,7 +69,7 @@ const fields = [
 		type: 'FLOAT32',
 		table: 'hotels',
 		orgTable: 'hotels',
-		database: 'for_vitest',
+		database: 'sample_db',
 		orgName: 'stars',
 		columnLength: 12,
 		charset: 63
@@ -79,7 +79,7 @@ const fields = [
 		type: 'DATETIME',
 		table: 'hotels',
 		orgTable: 'hotels',
-		database: 'for_vitest',
+		database: 'sample_db',
 		orgName: 'created_at',
 		columnLength: 19,
 		charset: 63
@@ -89,7 +89,7 @@ const fields = [
 		type: 'TIMESTAMP',
 		table: 'hotels',
 		orgTable: 'hotels',
-		database: 'for_vitest',
+		database: 'sample_db',
 		orgName: 'updated_at',
 		columnLength: 19,
 		charset: 63

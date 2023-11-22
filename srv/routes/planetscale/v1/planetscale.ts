@@ -22,7 +22,7 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 		port: Number(process.env['MYSQL_PORT']) || 3306,
 		user: process.env['MYSQL_USER'] || 'root',
 		password: process.env['MYSQL_PASSWORD'] || '',
-		database: process.env['MYSQL_DATABASE'] || 'for_vitest',
+		database: process.env['MYSQL_DATABASE'] || 'sample_db',
 		timezone: 'UTC' // Planetscale timezone is UTC
 	};
 	const { query } = req.body;

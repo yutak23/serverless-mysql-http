@@ -27,9 +27,23 @@ app.use('*', (_req: Request, res: Response, _next: NextFunction) => {
 		);
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
 	console.log(`Server started at http://localhost:${PORT}`);
 	consoleExpressRoutes(app);
 });
+
+const gracefulShutdown = () => {
+	server.close(() => {
+		process.exit(0);
+	});
+
+	// Forced termination if not completed within 5 seconds
+	setTimeout(() => {
+		process.exit(1);
+	}, 5000);
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
 
 export default app;
