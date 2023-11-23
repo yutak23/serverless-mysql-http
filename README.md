@@ -1,6 +1,6 @@
 ## Serverless MySQL HTTP (SMH)
 
-This is a PlanetScale emulator service that proxies HTTP requests to PlanetScale into requests for MySQL servers such as Docker.  
+This is a PlanetScale emulator that proxies HTTP requests to PlanetScale into requests for MySQL servers such as Docker.  
 The goal of this project is to allow development in a local environment in the same way as connecting to PlanetScale, without actually connecting to PlanetScale.
 
 ## Motivation (Why I develop this service)
@@ -9,9 +9,9 @@ The goal of this project is to allow development in a local environment in the s
 
 There may be times when you don't want to connect to the PlanetScale from your local development environment for reasons such as:
 
-- There is a risk of unintended billing
+- There is a risk of unintended billing (to reduce unnecessary spending)
 - In large-scale development, issuing id and password to connect to the production service can be cumbersome
-- You may not want to register for PlanetScale if you just want to try out some prototyping development
+- Want to reduce development time and improve product velocity by developing and testing locally, like [LocalStack](https://www.localstack.cloud/) in AWS or [Firebase Local Emulator Suite](https://firebase.google.com/docs/emulator-suite) in Firebase
 
 It seems that there are challenges to developing in a local environment while connected to PlanetScale.
 
@@ -26,10 +26,7 @@ By using this service, requests to PlanetScale are proxied to a MySQL server in 
 
 ### How to use with the [`@planetscale/database`](https://github.com/planetscale/database-js) SDK
 
-To make requests to SMH, set the `url` to `http://localhost:6306` (port number can be changed from 6306 to any other. see [Set up SMH](#set-up-smh) for details.).  
-If you only want to make this setting in your local environment, it's convenient to use `import.meta.env.DEV` from [Env Variables](https://vitejs.dev/guide/env-and-mode#env-variables) if you're using Vite. And you can probably implement it in the same way with `process.env.NODE_ENV` or similar.
-
-After that, you can implement it exactly the same way as when connecting to PlanetScale, and you can start developing comfortably in your local environment!
+Simply set the REST URL to the location where SMH is running. For example,
 
 ```ts
 import { connect } from '@planetscale/database';
@@ -42,11 +39,15 @@ const results = await conn.execute('select 1 from dual where 1=?', [1]);
 console.log(results);
 ```
 
-※The connection information to the MySQL server is set by SMH environment variables (see [Configuration](#configuration) section), so `user` and `password` passed to `connect(config)` are ignored. It is simplified because SMH is used in a local development environment.
+If you only want to make this setting in your local environment, it's convenient to use `import.meta.env.DEV` from [Env Variables](https://vitejs.dev/guide/env-and-mode#env-variables) if you're using Vite. And you can probably implement it in the same way with `process.env.NODE_ENV` or similar.
+
+※The connection information to the MySQL server is set by SMH environment variables (see [Configuration](#configuration) section), so `host`, `user`, and `password` passed to `connect(config)` are not used. In other words, when you are developing in a local environment, you can specify anything in `host`, `name`, and `password`.
 
 ### Set up SMH
 
-To start SMH, MySQL server that can be connected from SMH must also be started at the same time. Since it depends on whether Docker or Docker compose is used, the respective methods are described below.
+To start SMH, a MySQL server that can be connected from SMH must also be started at the same time. Do not forget to start the MySQL server.
+
+Will the MySQL server exist separately or will it be started at the same time with `docker compose`? The method differs depending on that.
 
 #### Docker
 
@@ -60,7 +61,7 @@ $ docker run \
     yutak23/serverless-mysql-http:latest
 ```
 
-See [Configuration](#configuration) for more information on connecting to the MySQL server.
+See [Configuration](#configuration) for information on setting up a connection to the MySQL server.
 
 ##### Attention
 
@@ -92,9 +93,9 @@ services:
       MYSQL_HOST: mysql # Using `mysql` hostname since they're in the same Docker network.
 ```
 
-#### Configuration
+## Configuration Options
 
-SMH allows you to change the connection settings to the MySQL server with the following environment variables. The default values are as per `Default Value`.
+SMH allows you to change the connection settings to the MySQL server with the following environment variables.
 
 | Environment variable name | Default Value | Notes                                                                                                                                                |
 | ------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -103,6 +104,36 @@ SMH allows you to change the connection settings to the MySQL server with the fo
 | MYSQL_USER                | `root`        |                                                                                                                                                      |
 | MYSQL_PASSWORD            | `''`          | empty string                                                                                                                                         |
 | MYSQL_DATABASE            | `sample_db`   |                                                                                                                                                      |
+
+## In GitHub Actions
+
+SMH can also be used in a CI environment such as GitHub Actions.
+
+This is because SMH is provided as a Docker image, so it can be started as a service container for a job; just start a MySQL server and put SRH next to it.
+
+SMH does not connect to MySQL until a request comes in, so you don't have to worry about a race condition where the MySQL container is not ready. If you are worried, just make sure to check the MySQL server startup as shown in the following example.
+
+```yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          TZ: UTC
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      smh:
+        image: yutak23/serverless-mysql-http:latest
+        env:
+          MYSQL_DATABASE: sample_db
+          MYSQL_HOST: mysql
+        ports:
+          - 6306:6306
+```
 
 ## Notes
 
@@ -123,6 +154,10 @@ SMH has been tested to produce the same results as when connecting to PlanetScal
   | name: 'count(\*)', <br> type: 'INT64', <br> columnLength: 21, <br> charset: 63, <br> flags: 32897 | name: 'count(\*)', <br> type: 'INT64', <br> table: '', <br> orgTable: '', <br> database: 'sample_db', <br> orgName: 'count(\*)', <br> columnLength: 21, <br> charset: 63 |
 
   However, we believe that there is few problem with local environment construction due to this reproducibility (compatibility)(If you wish, please raise the issue and we will consider modifications to improve reproducibility).
+
+## Similar services that emulate serverless services
+
+- [Serverless Redis HTTP (SRH)](https://github.com/hiett/serverless-redis-http/tree/master)
 
 ## License
 
