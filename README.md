@@ -63,6 +63,8 @@ $ docker run \
 
 See [Configuration](#configuration) for information on setting up a connection to the MySQL server.
 
+Link to the Docker hub: https://hub.docker.com/r/yutak23/serverless-mysql-http
+
 ##### Attention
 
 PlanetScale's timezone is fixed at UTC. The local MySQL server timezone must also be set to UTC.
