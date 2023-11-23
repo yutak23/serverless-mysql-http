@@ -1,6 +1,6 @@
 ## Serverless MySQL HTTP (SMH)
 
-This is a PlanetScale emulator that proxies HTTP requests to PlanetScale into requests for MySQL servers such as Docker.  
+This is a [PlanetScale](https://planetscale.com/) emulator that proxies HTTP requests to PlanetScale into requests for MySQL servers such as Docker.  
 The goal of this project is to allow development in a local environment in the same way as connecting to PlanetScale, without actually connecting to PlanetScale.
 
 ## Motivation (Why I develop this service)
