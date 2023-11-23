@@ -1,0 +1,54 @@
+name: test-using-docker
+
+on:
+  push:
+    branches:
+      - '**'
+  # pull_request:
+  #   branches:
+  #     - '**'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          TZ: UTC
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      smh:
+        image: yutak23/serverless-mysql-http:latest
+        env:
+          MYSQL_DATABASE: sample_db
+          MYSQL_HOST: mysql
+        ports:
+          - 3000:6306
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Initialize database
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-client
+          mysql -h mysql -u root < tests/sql/1_schema.sql
+          mysql -h mysql -u root < tests/sql/2_data.sql
+
+      - name: Install
+        run: yarn install --frozen-lockfile
+
+      - name: Wait for server
+        run: curl --retry 10 --retry-connrefused --retry-delay 5 --retry-max-time 60 http://localhost:3000/healthcheck
+
+      - name: Test
+        run: yarn test
