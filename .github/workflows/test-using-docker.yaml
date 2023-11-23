@@ -38,11 +38,12 @@ jobs:
           cache: 'yarn'
 
       - name: Initialize database
+        # we can use mysql service as localhost(https://docs.github.com/en/actions/using-containerized-services/about-service-containers#running-jobs-on-the-runner-machine)
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-client
-          mysql -h mysql -u root < tests/sql/1_schema.sql
-          mysql -h mysql -u root < tests/sql/2_data.sql
+          mysql -h 127.0.0.1 -u root < tests/sql/1_schema.sql
+          mysql -h 127.0.0.1 -u root < tests/sql/2_data.sql
 
       - name: Install
         run: yarn install --frozen-lockfile
