@@ -10,7 +10,7 @@ The goal of this project is to allow development in a local environment in the s
 There may be times when you don't want to connect to the PlanetScale from your local development environment for reasons such as:
 
 - There is a risk of unintended billing
-- In large-scale development, issuing ID and password to connect to the production service can be cumbersome
+- In large-scale development, issuing id and password to connect to the production service can be cumbersome
 - You may not want to register for PlanetScale if you just want to try out some prototyping development
 
 It seems that there are challenges to developing in a local environment while connected to PlanetScale.
@@ -26,7 +26,8 @@ By using this service, requests to PlanetScale are proxied to a MySQL server in 
 
 ### How to use with the [`@planetscale/database`](https://github.com/planetscale/database-js) SDK
 
-To make requests to SMH, set the `url` to `http://localhost:6306` (port number can be set). If you only want to make this setting in your local environment, it's convenient to use `import.meta.env.DEV` from [Env Variables](https://vitejs.dev/guide/env-and-mode#env-variables) if you're using Vite (you can probably implement it in the same way with `process.env.NODE_ENV` or similar).
+To make requests to SMH, set the `url` to `http://localhost:6306` (port number can be changed from 6306 to any other. see [Set up SMH](#set-up-smh) for details.).  
+If you only want to make this setting in your local environment, it's convenient to use `import.meta.env.DEV` from [Env Variables](https://vitejs.dev/guide/env-and-mode#env-variables) if you're using Vite. And you can probably implement it in the same way with `process.env.NODE_ENV` or similar.
 
 After that, you can implement it exactly the same way as when connecting to PlanetScale, and you can start developing comfortably in your local environment!
 
@@ -40,6 +41,8 @@ const conn = connect(config);
 const results = await conn.execute('select 1 from dual where 1=?', [1]);
 console.log(results);
 ```
+
+※The connection information to the MySQL server is set by SMH environment variables (see [Configuration](#configuration) section), so `user` and `password` passed to `connect(config)` are ignored. It is simplified because SMH is used in a local development environment.
 
 ### Set up SMH
 

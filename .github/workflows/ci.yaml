@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -50,3 +50,18 @@ jobs:
 
       - name: Test
         run: yarn test
+
+  docker-build:
+    needs: test
+    runs-on: ubuntu-latest
+    name: docker-build
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'yarn'
+
+      - name: Build docker image
+        run: yarn docker:build
