@@ -224,7 +224,7 @@ export default (
 			name: name.toLowerCase().replaceAll('`', ''),
 			type: sqlDef
 				? mapMySQLToVitessType(sqlDef.Type)
-				: mapMySQLToVitessType(mapNumberToMySQLType(type)),
+				: mapMySQLToVitessType(mapNumberToMySQLType(type as number)),
 			table: table || tableName,
 			orgTable: orgTable || tableName,
 			database: database || databaseName,

@@ -4,7 +4,6 @@ import mysql from 'mysql2/promise';
 import { DateTime } from 'luxon';
 import type {
 	PlanetscaleBody,
-	ExtendedFieldPacket,
 	QueryResultFieldExcerpt,
 	ResultSetHeader,
 	ExpressHandlerError,
@@ -54,7 +53,7 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 
 		const queryResult = await connection.query(query);
 		const rows = queryResult[0] as Record<string, unknown>[];
-		const originalFields = queryResult[1] as ExtendedFieldPacket[];
+		const originalFields = queryResult[1];
 
 		const timing = DateTime.now().diff(start, 'milliseconds').milliseconds;
 
@@ -85,10 +84,10 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 			table: field.table,
 			orgTable: field.orgTable,
 			database: config.database,
-			columnLength: field.columnLength,
-			charset: field.characterSet,
+			columnLength: field.columnLength || 0,
+			charset: field.characterSet || 0,
 			flags: field.flags,
-			type: field.type
+			type: field.type || null
 		}));
 
 		const fieldsConverted = fieldsConverter(sqlDefinitions, fields, config.database, tableName);

@@ -1,5 +1,3 @@
-import type { FieldPacket } from 'mysql2/promise';
-
 export interface ExpressHandlerSqlError extends Error {
 	status?: number;
 	code?: string;
@@ -24,14 +22,6 @@ export interface PlanetscaleBody {
 	session: string | null;
 }
 
-// Extended because the type definition is wrong
-// https://github.com/sidorares/node-mysql2/issues/1276
-export interface ExtendedFieldPacket extends FieldPacket {
-	columnLength: number | null;
-	characterSet: number | null;
-	typeName: string;
-}
-
 export interface QueryResultFieldExcerpt {
 	name: string;
 	table: string;
@@ -39,8 +29,8 @@ export interface QueryResultFieldExcerpt {
 	database: string;
 	columnLength: number | null;
 	charset: number | null;
-	flags: number | null;
-	type: number;
+	flags: number | null | string[];
+	type: number | null;
 	typeName?: string; // not exist in mysql2
 }
 
