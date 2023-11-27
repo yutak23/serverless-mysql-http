@@ -202,7 +202,9 @@ describe('Planetscale API', () => {
 			expect(results.rows[0]).toHaveProperty('stars', 4.2);
 			expect(results.rows[0]).toHaveProperty('created_at', '2023-11-20 02:53:56');
 			expect(results.rows[0]).toHaveProperty('updated_at', expect.any(String));
-			expect(results.rows[0]).toHaveProperty('address_json.area.area', '内幸町1-1-1');
+			expect(results.rows[0]).toHaveProperty('address_json.area.area.area', '内幸町1-1-1');
+			expect(results.rows[0]).toHaveProperty('address_json.area.area.city', '千代田区');
+			expect(results.rows[0]).toHaveProperty('address_json.area.area.prefecture', '東京都');
 			expect(results.rows[0]).toHaveProperty('address_json.area.city', '千代田区');
 			expect(results.rows[0]).toHaveProperty('address_json.area.prefecture', '東京都');
 			expect(results.rows[0]).toHaveProperty('address_json.city', '千代田区');
