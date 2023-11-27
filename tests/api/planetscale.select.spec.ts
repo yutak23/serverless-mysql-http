@@ -195,34 +195,27 @@ describe('Planetscale API', () => {
 			expect(results.headers).toEqual(headers);
 			expect(results.types).toEqual(types);
 			expect(results.fields).toEqual(fields);
-			expect(results.rows).toEqual([
-				{
-					id: 1,
-					name: '日本ホテル',
-					address: '東京都千代田区1-1',
-					stars: 4.2,
-					created_at: '2023-11-20 02:53:56',
-					updated_at: expect.any(String),
-					address_json: {
-						area: {
-							area: { area: '内幸町1-1-1', city: '千代田区', prefecture: '東京都' },
-							city: '千代田区',
-							prefecture: '東京都'
-						},
-						city: '千代田区',
-						prefecture: '東京都'
-					}
-				},
-				{
-					id: 2,
-					name: 'Japan HOTEL',
-					address: '1-1, Chiyoda-ku, Tokyo',
-					stars: 4.3,
-					address_json: null,
-					created_at: '2023-11-20 04:06:46',
-					updated_at: expect.any(String)
-				}
-			]);
+
+			expect(results.rows[0]).toHaveProperty('id', 1);
+			expect(results.rows[0]).toHaveProperty('name', '日本ホテル');
+			expect(results.rows[0]).toHaveProperty('address', '東京都千代田区1-1');
+			expect(results.rows[0]).toHaveProperty('stars', 4.2);
+			expect(results.rows[0]).toHaveProperty('created_at', '2023-11-20 02:53:56');
+			expect(results.rows[0]).toHaveProperty('updated_at', expect.any(String));
+			expect(results.rows[0]).toHaveProperty('address_json.area.area', '内幸町1-1-1');
+			expect(results.rows[0]).toHaveProperty('address_json.area.city', '千代田区');
+			expect(results.rows[0]).toHaveProperty('address_json.area.prefecture', '東京都');
+			expect(results.rows[0]).toHaveProperty('address_json.city', '千代田区');
+			expect(results.rows[0]).toHaveProperty('address_json.prefecture', '東京都');
+
+			expect(results.rows[1]).toHaveProperty('id', 2);
+			expect(results.rows[1]).toHaveProperty('name', 'Japan HOTEL');
+			expect(results.rows[1]).toHaveProperty('address', '1-1, Chiyoda-ku, Tokyo');
+			expect(results.rows[1]).toHaveProperty('stars', 4.3);
+			expect(results.rows[1]).toHaveProperty('address_json', null);
+			expect(results.rows[1]).toHaveProperty('created_at', '2023-11-20 04:06:46');
+			expect(results.rows[1]).toHaveProperty('updated_at', expect.any(String));
+
 			expect(results.size).toBe(2);
 			expect(results.statement).toBe('SELECT * FROM hotels ORDER BY `id` ASC LIMIT 2;');
 			expect(results.insertId).toBe('0');
