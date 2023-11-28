@@ -22,7 +22,7 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 		user: process.env['MYSQL_USER'] || 'root',
 		password: process.env['MYSQL_PASSWORD'] || '',
 		database: process.env['MYSQL_DATABASE'] || 'sample_db',
-		timezone: 'UTC' // Planetscale timezone is UTC
+		timezone: 'Z' // Planetscale timezone is UTC https://github.com/sidorares/node-mysql2/blob/v3.6.5/lib/connection_config.js#L133
 	};
 	const { query } = req.body;
 	const deleteRegex = /delete\s+from/i;
