@@ -6,8 +6,10 @@ const customJsonStringify = (inputData: Record<string, unknown>): string => {
 		const value = inputData[key];
 		if (typeof value === 'number') return `"${key}": ${value}`;
 
-		if (typeof value === 'object')
-			return `"${key}": ${customJsonStringify(inputData[key] as Record<string, unknown>)}`;
+		if (typeof value === 'object') {
+			if (Array.isArray(value)) return `"${key}": ${JSON.stringify(value)}`;
+			return `"${key}": ${customJsonStringify(value as Record<string, unknown>)}`;
+		}
 
 		return `"${key}": "${inputData[key] as string}"`;
 	});
