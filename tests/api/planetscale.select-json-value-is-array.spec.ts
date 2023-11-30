@@ -40,7 +40,6 @@ describe('Planetscale API', () => {
 				[data.insertId]
 			);
 
-			console.log(results.rows[0].address_json);
 			expect(results.rows[0]).toHaveProperty('address_json', { tags: ['a', 'b', 'c'] });
 		});
 
