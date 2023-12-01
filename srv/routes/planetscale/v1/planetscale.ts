@@ -30,6 +30,7 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 
 	const start = DateTime.now();
 
+	let connection;
 	try {
 		if (boostCachedQueriesRegex.test(query))
 			return res.status(200).json({
@@ -40,7 +41,7 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 				timing: DateTime.now().diff(start, 'milliseconds').milliseconds
 			});
 
-		const connection = await mysql.createConnection(config);
+		connection = await mysql.createConnection(config);
 		const isDeleteQuery = deleteRegex.test(query);
 
 		let deletedAffectedRows;
@@ -108,6 +109,8 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 		if ((error as ExpressHandlerSqlError).sqlState)
 			return res.status(200).sqlError(error as ExpressHandlerSqlError, config.database);
 		return res.status(500).error(error as ExpressHandlerError, config.database);
+	} finally {
+		if (connection) await connection.end();
 	}
 }) as RequestHandler);
 

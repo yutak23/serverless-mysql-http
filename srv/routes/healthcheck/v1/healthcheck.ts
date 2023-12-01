@@ -14,12 +14,15 @@ router.get('', (async (_req: Request, res: Response) => {
 		timezone: 'UTC' // Planetscale timezone is UTC
 	};
 
+	let connection;
 	try {
-		const connection = await mysql.createConnection(config);
+		connection = await mysql.createConnection(config);
 		await connection.ping();
 		return res.status(200).json({ message: 'OK' });
 	} catch (error) {
 		return res.status(500).error(error as Error);
+	} finally {
+		if (connection) await connection.end();
 	}
 }) as RequestHandler);
 
