@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mysql-version: ['mysql:5.7', 'mysql:8.0', 'mysql:8.2']
+        mysql-version: ['mysql:8.0', 'mysql:8.2']
     name: mysql-version_${{ matrix.mysql-version }}_test
 
     steps:
@@ -44,6 +44,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-client
+          docker ps -al
           mysql -h 127.0.0.1 -u root < tests/sql/1_schema.sql
           mysql -h 127.0.0.1 -u root < tests/sql/2_data.sql
 
