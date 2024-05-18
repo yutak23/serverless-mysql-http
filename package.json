@@ -39,7 +39,7 @@
 		"lodash": "^4.17.21",
 		"luxon": "^3.4.4",
 		"mysql2": "^3.6.5",
-		"snakecase-keys": "^5.5.0"
+		"snakecase-keys": "^8.0.1"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^18.4.3",
