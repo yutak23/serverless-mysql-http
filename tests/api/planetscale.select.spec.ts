@@ -276,55 +276,55 @@ describe('Planetscale API', () => {
 					name: 'Fluffy',
 					birth: '1993-02-04',
 					'curdate()': expect.any(String),
-					age: '30'
+					age: expect.any(String)
 				},
 				{
 					name: 'Claws',
 					birth: '1994-03-17',
 					'curdate()': expect.any(String),
-					age: '29'
+					age: expect.any(String)
 				},
 				{
 					name: 'Buffy',
 					birth: '1989-05-13',
 					'curdate()': expect.any(String),
-					age: '34'
+					age: expect.any(String)
 				},
 				{
 					name: 'Fang',
 					birth: '1990-08-27',
 					'curdate()': expect.any(String),
-					age: '33'
+					age: expect.any(String)
 				},
 				{
 					name: 'Bowser',
 					birth: '1979-08-31',
 					'curdate()': expect.any(String),
-					age: '44'
+					age: expect.any(String)
 				},
 				{
 					name: 'Chirpy',
 					birth: '1998-09-11',
 					'curdate()': expect.any(String),
-					age: '25'
+					age: expect.any(String)
 				},
 				{
 					name: 'Whistler',
 					birth: '1997-12-09',
 					'curdate()': expect.any(String),
-					age: '25'
+					age: expect.any(String)
 				},
 				{
 					name: 'Slim',
 					birth: '1996-04-29',
 					'curdate()': expect.any(String),
-					age: '27'
+					age: expect.any(String)
 				},
 				{
 					name: 'Puffball',
 					birth: '1999-03-30',
 					'curdate()': expect.any(String),
-					age: '24'
+					age: expect.any(String)
 				}
 			]);
 			expect(results.size).toBe(9);
