@@ -32,6 +32,7 @@
 		"yarn.lock": "license-checker --production --failOn \"GPL;AGPL;LGPL;NGPL\" --summary"
 	},
 	"dependencies": {
+		"@tidbcloud/serverless": "^0.1.1",
 		"app-root-path": "^3.1.0",
 		"console-express-routes": "^1.0.2",
 		"crypto": "^1.0.1",
@@ -67,6 +68,7 @@
 		"simple-git-hooks": "^2.11.1",
 		"supertest": "^7.0.0",
 		"typescript": "~5.4.5",
+		"undici": "^6.18.2",
 		"vitest": "^1.6.0"
 	}
 }
