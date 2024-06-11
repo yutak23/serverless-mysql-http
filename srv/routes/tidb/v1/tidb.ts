@@ -9,7 +9,6 @@ import type {
 	ExpressHandlerSqlError
 } from '../../../types/express-handler.js';
 import { SqlDefinition, converterForTidb } from '../../../lib/fields-converter.js';
-import { generateCountQuery } from '../../../lib/utils.js';
 
 const router = express.Router();
 
@@ -23,20 +22,10 @@ router.post('/', (async (req: Request<object, object, PlanetscaleBody>, res: Res
 		timezone: 'Z' // TiDB default timezone is UTC https://github.com/sidorares/node-mysql2/blob/v3.6.5/lib/connection_config.js#L133
 	};
 	const { query } = req.body;
-	const deleteRegex = /delete\s+from/i;
 
 	let connection;
 	try {
 		connection = await mysql.createConnection(config);
-		const isDeleteQuery = deleteRegex.test(query);
-
-		let deletedAffectedRows;
-		if (isDeleteQuery) {
-			const countQuery = generateCountQuery(query);
-			const countResult = await connection.query(countQuery);
-			const rows = countResult[0] as Record<string, unknown>[];
-			deletedAffectedRows = rows[0]?.['count'];
-		}
 
 		const queryResult = await connection.query(query);
 		const rows = queryResult[0] as Record<string, unknown>[];
@@ -44,13 +33,9 @@ router.post('/', (async (req: Request<object, object, PlanetscaleBody>, res: Res
 
 		if (!originalFields) {
 			const result = queryResult[0] as ResultSetHeader;
-			return res.status(200).json({
-				result: {
-					rowsAffected: isDeleteQuery
-						? deletedAffectedRows // Planetscale returns for DELETE
-						: result.affectedRows.toString(),
-					insertId: result.insertId.toString()
-				}
+			return res.status(200).header({ 'TiDB-Session': 'TiDB-Session' }).json({
+				rowsAffected: result.affectedRows,
+				lastInsertID: result.insertId
 			});
 		}
 
