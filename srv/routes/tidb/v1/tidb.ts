@@ -84,7 +84,7 @@ router.post('/', (async (req: Request<object, object, PlanetscaleBody>, res: Res
 		console.error(error);
 
 		if ((error as ExpressHandlerSqlError).sqlState)
-			return res.status(200).sqlError(error as ExpressHandlerSqlError, config.database);
+			return res.status(500).sqlError(error as ExpressHandlerSqlError, config.database);
 		return res.status(500).error(error as ExpressHandlerError, config.database);
 	} finally {
 		if (connection) await connection.end();
