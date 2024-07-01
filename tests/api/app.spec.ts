@@ -22,7 +22,7 @@ describe('Not exist api path', () => {
 		expect(response.status).toBe(404);
 		expect(json).toHaveProperty(
 			'message',
-			`only support '/psdb.v1alpha1.Database/Execute' and '/psdb.v1alpha1.Database/CreateSession' path`
+			`only support '/psdb.v1alpha1.Database/Execute' and '/psdb.v1alpha1.Database/CreateSession', '/v1beta/sql'`
 		);
 	});
 });

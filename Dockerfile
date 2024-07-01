@@ -27,8 +27,8 @@ RUN chmod +x /usr/bin/tini
 
 RUN yarn install --frozen-lockfile --production
 
-ENV PORT=6306
+ENV PORT=6000
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "dist/app.js"]
-EXPOSE 6306
+EXPOSE 6000 6443 

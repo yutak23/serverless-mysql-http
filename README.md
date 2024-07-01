@@ -43,6 +43,57 @@ If you only want to make this setting in your local environment, it's convenient
 
 ※The connection information to the MySQL server is set by SMH environment variables (see [Configuration](#configuration) section), so `host`, `user`, and `password` passed to `connect(config)` are not used. In other words, when you are developing in a local environment, you can specify anything in `host`, `name`, and `password`.
 
+### [`@tidbcloud/serverless`](https://github.com/tidbcloud/serverless-js) SDKでの利用方法
+
+First, with `@tidbcloud/serverless`, requests to the domain have the `http-` prefix, so set `http-localhost` to resolve to `127.0.0.1`.
+
+On Linux, you can modify `/etc/hosts` as follows:
+
+```
+127.0.0.1   http-localhost
+```
+
+or
+
+```console
+$ sudo echo "127.0.0.1 http-localhost" | sudo tee -a /etc/hosts
+```
+
+Then, just specify `localhost` as the host to initialize as follows. This allows development in a local environment just like connecting to TiDB.
+
+```js
+import { connect } from '@tidbcloud/serverless';
+
+if (import.meta.env.DEV) {
+	// For using SMH,
+	// 	it is necessary to allow self-signed server certificates during HTTPS communication.
+	// https://github.com/orgs/nodejs/discussions/44038
+	const { Agent, setGlobalDispatcher } = await import('undici');
+	const agent = new Agent({
+		connect: {
+			rejectUnauthorized: false
+		}
+	});
+	setGlobalDispatcher(agent);
+}
+
+const conn = connect({
+	host: 'localhost',
+	username: '<username>',
+	password: '<password>',
+	database: '<database>'
+});
+const results = await conn.execute('select * from users where id=?', [1]);
+console.log(results);
+```
+
+If you only want to make this setting in your local environment, it's convenient to use `import.meta.env.DEV` from [Env Variables](https://vitejs.dev/guide/env-and-mode#env-variables) if you're using Vite. And you can probably implement it in the same way with `process.env.NODE_ENV` or similar.
+
+※The connection information to the MySQL server is set by SMH environment variables (see [Configuration](#configuration) section), so `user`, and `password` passed to `connect(config)` are not used. In other words, when you are developing in a local environment, you can specify anything in `name`, and `password`.
+
+**注**  
+SMH uses a self-signed SSL certificate, so there will be errors in `fetch` requests used internally by `@tidbcloud/serverless`. Therefore, it is necessary to use the configuration with [undici](https://github.com/nodejs/undici).
+
 ### Set up SMH
 
 To start SMH, a MySQL server that can be connected from SMH must also be started at the same time. Do not forget to start the MySQL server.
@@ -55,7 +106,7 @@ If you have a MySQL server locally, you can start an SMH container that connects
 
 ```console
 $ docker run \
-    -d -it -p 6306:6306 \
+    -d -it -p 6000:6000 -p 6443:6443 \
     -e MYSQL_DATABASE=<your_database_name> \
     -e MYSQL_HOST=<your_server_host_here> \
     yutak23/serverless-mysql-http:latest
@@ -89,7 +140,8 @@ services:
     image: yutak23/serverless-mysql-http:latest
     container_name: serverless-mysql-http
     ports:
-      - 6306:6306
+      - 6000:6000
+      - 6443:6443
     environment:
       MYSQL_DATABASE: <your database name>
       MYSQL_HOST: mysql # Using `mysql` hostname since they're in the same Docker network.
@@ -134,7 +186,8 @@ jobs:
           MYSQL_DATABASE: sample_db
           MYSQL_HOST: mysql
         ports:
-          - 6306:6306
+          - 6000:6000
+          - 6443:6443
 ```
 
 ## Notes

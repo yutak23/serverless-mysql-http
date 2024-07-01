@@ -1,4 +1,5 @@
 import type { Field } from '@planetscale/database';
+import { FieldPacket } from 'mysql2';
 import type { QueryResultFieldExcerpt } from '../types/express-handler.js';
 
 export { Field };
@@ -42,6 +43,12 @@ export interface SqlDefinition {
 	Key: string;
 	Default: null;
 	Extra: string;
+}
+
+export interface TiDBType {
+	name: string;
+	type: string;
+	nullable: boolean;
 }
 
 // https://github.com/mysqljs/mysql/blob/v2.18.1/lib/protocol/constants/types.js
@@ -209,7 +216,29 @@ function mapMySQLToVitessType(mysqlType: string): VitessDataType {
 	}
 }
 
-export default (
+/**
+ * mysql2のライブラリの型をMySQLの型にマッピングする
+ * ※基本的には一致しているが、不一致のもののみを対応。適時追加が必要。
+ *
+ * @param mysqlType mysql2のライブラリの中での型
+ * @returns MySQL type
+ */
+function mapMySQLToTiDB(mysqlType: string): string {
+	const upperCasedType = mysqlType.toUpperCase();
+	let type = upperCasedType.toUpperCase().split(/\s+/)[0];
+
+	const match = type?.match(/(\w+)\((\d+)\)/);
+	type = match ? match[1] : type;
+
+	switch (type) {
+		case 'LONGLONG':
+			return 'BIGINT';
+		default:
+			return type as string;
+	}
+}
+
+const convertForVitess = (
 	sqlDefinitions: SqlDefinition[],
 	fields: QueryResultFieldExcerpt[],
 	databaseName: string,
@@ -236,3 +265,32 @@ export default (
 
 	return typeMapping;
 };
+
+const converterForTidb = (
+	sqlDefinitions: SqlDefinition[],
+	mysql2FieldPackets: FieldPacket[]
+): TiDBType[] => {
+	const types: TiDBType[] = [];
+
+	mysql2FieldPackets.forEach((field) => {
+		const sqlDef = sqlDefinitions.find((def) => def.Field === field.name);
+
+		const originalType = sqlDef
+			? sqlDef.Type.toUpperCase().replace(/\(\d+\)/g, '')
+			: mapMySQLToTiDB(mapNumberToMySQLType(field.type as number));
+
+		const type = originalType.includes('UNSIGNED')
+			? `UNSIGNED ${originalType.replace(' UNSIGNED', '')}`
+			: originalType;
+
+		types.push({
+			name: field.name,
+			type,
+			nullable: sqlDef ? sqlDef.Null === 'YES' : !field.flags
+		});
+	});
+
+	return types;
+};
+
+export { convertForVitess, converterForTidb };

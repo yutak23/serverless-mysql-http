@@ -1,5 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import consoleExpressRoutes from 'console-express-routes';
+import https from 'https';
+import fs from 'fs';
 import errorResponse from './lib/error-response.js';
 import createRoutes from './routes/index.js';
 
@@ -22,18 +24,34 @@ app.use('*', (_req: Request, res: Response, _next: NextFunction) => {
 		.status(404)
 		.error(
 			new Error(
-				`only support '/psdb.v1alpha1.Database/Execute' and '/psdb.v1alpha1.Database/CreateSession' path`
+				`only support '/psdb.v1alpha1.Database/Execute' and '/psdb.v1alpha1.Database/CreateSession', '/v1beta/sql'`
 			)
 		);
 });
+
+const httpsApp = https.createServer(
+	{
+		key: fs.readFileSync('./srv/ssl/server.key'),
+		cert: fs.readFileSync('./srv/ssl/server.crt')
+	},
+	app
+);
 
 const server = app.listen(PORT, () => {
 	console.log(`Server started at http://localhost:${PORT}`);
 	consoleExpressRoutes(app);
 });
 
+const httpsServer = httpsApp.listen(Number(PORT) + 443, () => {
+	console.log(`Server started at https://localhost:${Number(PORT) + 443}`);
+	consoleExpressRoutes(app);
+});
+
 const gracefulShutdown = () => {
 	server.close(() => {
+		process.exit(0);
+	});
+	httpsServer.close(() => {
 		process.exit(0);
 	});
 

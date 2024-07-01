@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import fieldsConverter, { Field } from '../../srv/lib/fields-converter.js';
+import {
+	converterForTidb,
+	convertForVitess,
+	Field,
+	SqlDefinition
+} from '../../srv/lib/fields-converter.js';
 
-describe('Fields converter', () => {
+describe('convertForVitess', () => {
 	const sqlDefinitions = [
 		{
 			Field: 'id',
@@ -84,7 +89,7 @@ describe('Fields converter', () => {
 	];
 
 	it('should convert fields', () => {
-		const fields = fieldsConverter(
+		const fields = convertForVitess(
 			sqlDefinitions,
 			queryResultFieldExcerpts,
 			'dumyDtabaseName',
@@ -103,7 +108,7 @@ describe('Fields converter', () => {
 
 	describe('sqlDefinitions is empty array', () => {
 		it('type: 8(LONGLONG)', () => {
-			const fields = fieldsConverter(
+			const fields = convertForVitess(
 				[],
 				[
 					{
@@ -127,5 +132,83 @@ describe('Fields converter', () => {
 
 			expect(fields).toHaveProperty('[0].type', 'INT64'); // COUNT(`id`)
 		});
+	});
+});
+
+describe('converterForTidb', () => {
+	const sqlDefinitions: SqlDefinition[] = [
+		{
+			Field: 'id',
+			Type: 'int unsigned',
+			Null: 'NO',
+			Key: 'PRI',
+			Default: null,
+			Extra: 'auto_increment'
+		},
+		{
+			Field: 'name',
+			Type: 'varchar(64)',
+			Null: 'NO',
+			Key: '',
+			Default: null,
+			Extra: ''
+		},
+		{
+			Field: 'address',
+			Type: 'varchar(128)',
+			Null: 'YES',
+			Key: '',
+			Default: null,
+			Extra: ''
+		},
+		{
+			Field: 'stars',
+			Type: 'float',
+			Null: 'YES',
+			Key: '',
+			Default: null,
+			Extra: ''
+		}
+	];
+
+	const mysql2FieldPackets = [
+		{
+			name: 'id',
+			type: 3
+		},
+		{
+			name: 'name',
+			type: 253
+		},
+		{
+			name: 'address',
+			type: 253
+		},
+		{
+			name: 'stars',
+			type: 245
+		}
+	];
+
+	it('should convert fields for TiDB', () => {
+		const types = converterForTidb(sqlDefinitions, mysql2FieldPackets);
+
+		expect(types).toHaveLength(4);
+
+		expect(types[0]).toHaveProperty('name', 'id');
+		expect(types[0]).toHaveProperty('type', 'UNSIGNED INT');
+		expect(types[0]).toHaveProperty('nullable', false);
+
+		expect(types[1]).toHaveProperty('name', 'name');
+		expect(types[1]).toHaveProperty('type', 'VARCHAR');
+		expect(types[1]).toHaveProperty('nullable', false);
+
+		expect(types[2]).toHaveProperty('name', 'address');
+		expect(types[2]).toHaveProperty('type', 'VARCHAR');
+		expect(types[2]).toHaveProperty('nullable', true);
+
+		expect(types[3]).toHaveProperty('name', 'stars');
+		expect(types[3]).toHaveProperty('type', 'FLOAT');
+		expect(types[3]).toHaveProperty('nullable', true);
 	});
 });
