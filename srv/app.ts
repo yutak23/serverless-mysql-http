@@ -24,7 +24,7 @@ app.use('*', (_req: Request, res: Response, _next: NextFunction) => {
 		.status(404)
 		.error(
 			new Error(
-				`only support '/psdb.v1alpha1.Database/Execute' and '/psdb.v1alpha1.Database/CreateSession' path`
+				`only support '/psdb.v1alpha1.Database/Execute' and '/psdb.v1alpha1.Database/CreateSession', '/v1beta/sql'`
 			)
 		);
 });
