@@ -58,6 +58,12 @@ Linuxであれば`/etc/hosts`を以下のように変更できます。
 127.0.0.1   http-localhost
 ```
 
+または
+
+```console
+$ sudo echo "127.0.0.1 http-localhost" | sudo tee -a /etc/hosts
+```
+
 あとは、以下のようにホストに`localhost`を指定して初期化するだけです。これでTiDBに接続しているときと同じように、ローカル環境でも開発ができます。
 
 ```js
