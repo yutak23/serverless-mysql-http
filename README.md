@@ -55,7 +55,7 @@ If you have a MySQL server locally, you can start an SMH container that connects
 
 ```console
 $ docker run \
-    -d -it -p 6306:6306 \
+    -d -it -p 6000:6000 -p 6443:6443 \
     -e MYSQL_DATABASE=<your_database_name> \
     -e MYSQL_HOST=<your_server_host_here> \
     yutak23/serverless-mysql-http:latest
@@ -89,7 +89,8 @@ services:
     image: yutak23/serverless-mysql-http:latest
     container_name: serverless-mysql-http
     ports:
-      - 6306:6306
+      - 6000:6000
+      - 6443:6443
     environment:
       MYSQL_DATABASE: <your database name>
       MYSQL_HOST: mysql # Using `mysql` hostname since they're in the same Docker network.
@@ -134,7 +135,8 @@ jobs:
           MYSQL_DATABASE: sample_db
           MYSQL_HOST: mysql
         ports:
-          - 6306:6306
+          - 6000:6000
+          - 6443:6443
 ```
 
 ## Notes
