@@ -53,8 +53,9 @@ router.post('/', (async (req: Request<object, object, PlanetscaleBody>, res: Res
 			const converted = { ...row };
 
 			Object.keys(row).forEach((key) => {
-				if (typeof converted[key] === 'number' && Number.isFinite(converted[key]))
-					converted[key] = (converted[key] as number).toString();
+				if (typeof converted[key] === 'number' && Number.isFinite(converted[key])) {
+					converted[key] = String(converted[key]);
+				}
 
 				const columnType = types.find((type) => type.name === key);
 				if (!columnType) return;
