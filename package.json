@@ -11,7 +11,7 @@
 		"express:watch": "nodemon --watch dist/ dist/app.js",
 		"express": "node dist/app.js",
 		"test": "vitest run",
-		"docker:build": "docker build -t yutak23/serverless-mysql-http:latest .",
+		"docker:build": "docker build -t yutak23/serverless-mysql-http:latest . > ./build.log 2>&1",
 		"mysqldump:schema": "docker exec -t mysql mysqldump -u root --databases sample_db --no-data | sed -e 's/ AUTO_INCREMENT=[0-9]*//' > ./tests/sql/1_schema.sql",
 		"mysqldump:data": "docker exec -t mysql mysqldump -u root -t --databases sample_db --no-create-db > ./tests/sql/2_data.sql",
 		"lint": "eslint . --ext .cjs,.mjs,.js,.ts,.cts,.mts",
