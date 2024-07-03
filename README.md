@@ -1,7 +1,9 @@
 ## Serverless MySQL HTTP (SMH)
 
-This is a [PlanetScale](https://planetscale.com/) emulator that proxies HTTP requests to PlanetScale into requests for MySQL servers such as Docker.  
-The goal of this project is to allow development in a local environment in the same way as connecting to PlanetScale, without actually connecting to PlanetScale.
+This is an emulator for the `serverless driver` of [PlanetScale](https://planetscale.com/) and [TiDB](https://docs.pingcap.com/), which are serverless MySQL services.  
+By using this, you can proxy HTTP requests to requests for a MySQL server like Docker.
+
+The goal of this project is to enable local development in the same way as connecting to PlanetScale or TiDB, without actually connecting to them.
 
 ## Motivation (Why I develop this service)
 
@@ -43,7 +45,7 @@ If you only want to make this setting in your local environment, it's convenient
 
 ※The connection information to the MySQL server is set by SMH environment variables (see [Configuration](#configuration) section), so `host`, `user`, and `password` passed to `connect(config)` are not used. In other words, when you are developing in a local environment, you can specify anything in `host`, `name`, and `password`.
 
-### [`@tidbcloud/serverless`](https://github.com/tidbcloud/serverless-js) SDKでの利用方法
+### How to use with the [`@tidbcloud/serverless`](https://github.com/tidbcloud/serverless-js)
 
 First, with `@tidbcloud/serverless`, requests to the domain have the `http-` prefix, so set `http-localhost` to resolve to `127.0.0.1`.
 
