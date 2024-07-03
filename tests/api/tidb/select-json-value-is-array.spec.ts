@@ -48,7 +48,7 @@ describe('TiDB API', () => {
 
 		it('DELETE FROM hotels WHERE id >= \\d+;', async () => {
 			const results: FullResult = (await connection.execute(
-				`DELETE FROM hotels WHERE id >= ${data.insertId};`,
+				`DELETE FROM hotels WHERE id = ${data.insertId};`,
 				[],
 				{ fullResult: true }
 			)) as FullResult;

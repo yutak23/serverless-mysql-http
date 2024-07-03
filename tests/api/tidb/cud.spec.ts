@@ -14,7 +14,12 @@ setGlobalDispatcher(agent);
 describe('Planetscale API', () => {
 	describe('INSERT and UPDATE and DELETE', () => {
 		let connection: Connection;
-		const data = { insertId: 0 };
+		const data = {
+			insertId: {
+				first: 0,
+				second: 0
+			}
+		};
 
 		beforeAll(() => {
 			connection = connect({
@@ -39,7 +44,7 @@ describe('Planetscale API', () => {
 			expect(results.lastInsertId).toEqual(expect.any(Number));
 			expect(results.rowCount).toBe(0);
 
-			data.insertId = results.lastInsertId as number;
+			data.insertId.first = results.lastInsertId as number;
 		});
 
 		it('INSERT INTO hotels (name, address) VALUES ("INSERT HOTEL", "1-1, Chiyoda-ku, Tokyo");', async () => {
@@ -55,6 +60,8 @@ describe('Planetscale API', () => {
 			expect(results.rowsAffected).toBe(1);
 			expect(results.lastInsertId).toEqual(expect.any(Number));
 			expect(results.rowCount).toBe(0);
+
+			data.insertId.second = results.lastInsertId as number;
 		});
 
 		it('UPDATE hotels SET ... WHERE id = \\d+;', async () => {
@@ -71,7 +78,7 @@ describe('Planetscale API', () => {
 							"prefecture": "東京都"
 					}'
 				WHERE id = ?;`,
-				[data.insertId],
+				[data.insertId.first],
 				{ fullResult: true }
 			)) as FullResult;
 
@@ -85,8 +92,8 @@ describe('Planetscale API', () => {
 
 		it('DELETE FROM hotels WHERE id >= \\d+;', async () => {
 			const results: FullResult = (await connection.execute(
-				`DELETE FROM hotels WHERE id >= :id;`,
-				{ id: data.insertId },
+				`DELETE FROM hotels WHERE id IN (:id1, :id2);`,
+				{ id1: data.insertId.first, id2: data.insertId.second },
 				{ fullResult: true }
 			)) as FullResult;
 
