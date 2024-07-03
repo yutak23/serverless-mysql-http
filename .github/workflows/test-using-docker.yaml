@@ -46,6 +46,9 @@ jobs:
           mysql -h 127.0.0.1 -u root < tests/sql/1_schema.sql
           mysql -h 127.0.0.1 -u root < tests/sql/2_data.sql
 
+      - name: Add hosts to /etc/hosts
+        run: sudo echo "127.0.0.1 http-localhost" | sudo tee -a /etc/hosts
+
       - name: Install
         run: yarn install --frozen-lockfile
 
