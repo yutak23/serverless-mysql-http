@@ -93,7 +93,7 @@ If you only want to make this setting in your local environment, it's convenient
 
 ※The connection information to the MySQL server is set by SMH environment variables (see [Configuration](#configuration) section), so `user`, and `password` passed to `connect(config)` are not used. In other words, when you are developing in a local environment, you can specify anything in `name`, and `password`.
 
-**注**  
+**Note**  
 SMH uses a self-signed SSL certificate, so there will be errors in `fetch` requests used internally by `@tidbcloud/serverless`. Therefore, it is necessary to use the configuration with [undici](https://github.com/nodejs/undici).
 
 ### Set up SMH
