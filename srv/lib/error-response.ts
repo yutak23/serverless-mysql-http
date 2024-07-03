@@ -58,7 +58,7 @@ export default () => (req: Request, res: Response, next: NextFunction) => {
 			});
 		if (!errorResBody.errors.length) errorResBody.errors.push({ message: error.message });
 
-		res.json(snakecaseKeys(errorResBody));
+		res.header({ 'TiDB-Session': 'TiDB-Session' }).json(snakecaseKeys(errorResBody));
 	};
 
 	res.sqlError = (error: ExpressHandlerSqlError, databaseName?: string) => {
@@ -81,15 +81,17 @@ export default () => (req: Request, res: Response, next: NextFunction) => {
 
 		// https://github.com/planetscale/database-js/blob/v1.11.0/src/index.ts#L9-L12
 		const errorResBody: {
+			message: string;
 			error: { code: string; message: string };
 		} = {
+			message: `target: ${databaseName}: vttablet: rpc error: code = ${error.code} desc = ${error.sqlMessage} (errno ${error.errno}) (sqlstate '${error.sqlState}') (CallerID: serverless-mysql-http): Sql: "${error.sql}", BindVars: {REDACTED}`,
 			error: {
 				code: 'UNKNOWN',
 				message: `target: ${databaseName}: vttablet: rpc error: code = ${error.code} desc = ${error.sqlMessage} (errno ${error.errno}) (sqlstate '${error.sqlState}') (CallerID: serverless-mysql-http): Sql: "${error.sql}", BindVars: {REDACTED}`
 			}
 		};
 
-		res.json(snakecaseKeys(errorResBody));
+		res.header({ 'TiDB-Session': 'TiDB-Session' }).json(snakecaseKeys(errorResBody));
 	};
 	next();
 };

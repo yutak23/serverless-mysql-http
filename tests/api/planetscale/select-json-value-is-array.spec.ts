@@ -45,7 +45,7 @@ describe('Planetscale API', () => {
 
 		it('DELETE FROM hotels WHERE id >= \\d+;', async () => {
 			const results: ExecutedQuery = await connection.execute(
-				`DELETE FROM hotels WHERE id >= ${data.insertId};`
+				`DELETE FROM hotels WHERE id = ${data.insertId};`
 			);
 
 			expect(results.rowsAffected).toBe(1);

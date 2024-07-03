@@ -16,7 +16,12 @@ const config: {
 describe('Planetscale API', () => {
 	describe('INSERT and UPDATE and DELETE', () => {
 		let connection: Connection;
-		const data = { insertId: '' };
+		const data = {
+			insertId: {
+				first: '',
+				second: ''
+			}
+		};
 
 		beforeAll(() => {
 			config.url = HOST;
@@ -38,7 +43,7 @@ describe('Planetscale API', () => {
 			expect(results.rowsAffected).toBe(1);
 			expect(results.time).toEqual(expect.any(Number));
 
-			data.insertId = results.insertId;
+			data.insertId.first = results.insertId;
 		});
 
 		it('INSERT INTO hotels (name, address) VALUES ("INSERT HOTEL", "1-1, Chiyoda-ku, Tokyo");', async () => {
@@ -55,6 +60,8 @@ describe('Planetscale API', () => {
 			expect(results.insertId).toEqual(expect.any(String));
 			expect(results.rowsAffected).toBe(1);
 			expect(results.time).toEqual(expect.any(Number));
+
+			data.insertId.second = results.insertId;
 		});
 
 		it('UPDATE hotels SET ... WHERE id = \\d+;', async () => {
@@ -70,7 +77,7 @@ describe('Planetscale API', () => {
 							"city": "千代田区",
 							"prefecture": "東京都"
 					}'
-				WHERE id = ${data.insertId};`
+				WHERE id = ${data.insertId.first};`
 			);
 
 			expect(results.headers).toEqual([]);
@@ -86,7 +93,7 @@ describe('Planetscale API', () => {
 
 		it('DELETE FROM hotels WHERE id >= \\d+;', async () => {
 			const results: ExecutedQuery = await connection.execute(
-				`DELETE FROM hotels WHERE id >= ${data.insertId};`
+				`DELETE FROM hotels WHERE id IN (${data.insertId.first}, ${data.insertId.second});`
 			);
 
 			expect(results.headers).toEqual([]);

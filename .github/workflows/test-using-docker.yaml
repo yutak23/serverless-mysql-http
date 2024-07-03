@@ -27,7 +27,8 @@ jobs:
           MYSQL_DATABASE: sample_db
           MYSQL_HOST: mysql
         ports:
-          - 3000:6306
+          - 3000:6000
+          - 3443:6443
 
     steps:
       - uses: actions/checkout@v3
@@ -44,6 +45,9 @@ jobs:
           sudo apt-get install -y mysql-client
           mysql -h 127.0.0.1 -u root < tests/sql/1_schema.sql
           mysql -h 127.0.0.1 -u root < tests/sql/2_data.sql
+
+      - name: Add hosts to /etc/hosts
+        run: sudo echo "127.0.0.1 http-localhost" | sudo tee -a /etc/hosts
 
       - name: Install
         run: yarn install --frozen-lockfile

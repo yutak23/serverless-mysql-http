@@ -9,7 +9,7 @@ import type {
 	ExpressHandlerError,
 	ExpressHandlerSqlError
 } from '../../../types/express-handler.js';
-import fieldsConverter, { SqlDefinition } from '../../../lib/fields-converter.js';
+import { convertForVitess, SqlDefinition } from '../../../lib/fields-converter.js';
 import encodeRow from '../../../lib/encode-row.js';
 import { generateCountQuery } from '../../../lib/utils.js';
 
@@ -91,7 +91,7 @@ router.post('/Execute', (async (req: Request<object, object, PlanetscaleBody>, r
 			type: field.type || null
 		}));
 
-		const fieldsConverted = fieldsConverter(sqlDefinitions, fields, config.database, tableName);
+		const fieldsConverted = convertForVitess(sqlDefinitions, fields, config.database, tableName);
 
 		return res.status(200).json({
 			result: {
