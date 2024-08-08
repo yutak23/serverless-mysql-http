@@ -63,7 +63,7 @@
 		"license-checker": "^25.0.1",
 		"lint-staged": "^15.2.7",
 		"nodemon": "^3.1.4",
-		"npm-check-updates": "^16.14.20",
+		"npm-check-updates": "^17.0.6",
 		"prettier": "^3.3.2",
 		"simple-git-hooks": "^2.11.1",
 		"supertest": "^7.0.0",
