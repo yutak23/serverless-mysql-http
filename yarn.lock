@@ -2940,10 +2940,10 @@ normalize-path@^3.0.0, normalize-path@~3.0.0:
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-3.0.0.tgz#0dcd69ff23a1c9b11fd0978316644a0388216a65"
   integrity sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==
 
-npm-check-updates@^17.0.6:
-  version "17.0.6"
-  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-17.0.6.tgz#55f6b89cb5ef03bc42a00e359a90c21c7b057829"
-  integrity sha512-KCiaJH1cfnh/RyzKiDNjNfXgcKFyQs550Uf1OF/Yzb8xO56w+RLpP/OKRUx23/GyP/mLYwEpOO65qjmVdh6j0A==
+npm-check-updates@^18.0.2:
+  version "18.0.2"
+  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-18.0.2.tgz#ff956c9ae0eab87eaf4ae586849203ca91257f02"
+  integrity sha512-9uVFZUCg5oDOcbzdsrJ4BEvq2gikd23tXuF5mqpl4mxVl051lzB00Xmd7ZVjVWY3XNUF3BQKWlN/qmyD8/bwrA==
 
 npm-normalize-package-bin@^1.0.0:
   version "1.0.1"
